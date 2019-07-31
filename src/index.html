@@ -3,11 +3,43 @@
   <head lang="de-DE">
     <meta charset="UTF-8">
     <title>Hello World!</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="post.js"></script>
+    <script defer src="post-list.js"></script>
+    <script defer src="account.js"></script>
+    <script defer src="account-list.js"></script>
+    <script defer src="controller.js"></script>
   </head>
   <body>
-    <h1>Hello World!</h1>
-    We are using node <script>document.write(process.versions.node)</script>,
-    Chrome <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+    <section id="accounts-section">
+        <div class="display">
+            <ul id="account-list"></ul>
+          </div>
+      <div class="action">
+        <button class="edit">&#9998;</button>
+        <button class="add">+</button>
+        <button class="remove">-</button>
+      </div>
+    </section>
+    <section id="posts-section">
+      <div class="display">
+        <ul id="post-list"></ul>
+      </div>
+      <div class="action">
+        <button class="edit">&#9998;</button>
+        <button class="add">+</button>
+        <button class="remove">-</button>
+      </div>
+    </section>
+    <section id="post-text-section" class="double">
+      <div class="display">
+        <textarea readonly name="post-text" id="post-text" cols="30" rows="10"></textarea>
+      </div>
+      <div class="action">
+        <button class="accept">&#10003;</button>
+        <button class="decline">&#10005;</button>
+        <button class="defer">&#129107;</button>
+      </div>
+    </section>
   </body>
 </html>
