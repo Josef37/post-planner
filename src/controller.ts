@@ -1,105 +1,125 @@
-let postList = new PostList();
-postList.addPost(new Post("Post 1", "URL1", "Post Text 1"));
-postList.addPost(new Post("Post 2", "URL2", "Post Text 2"));
-postList.addPost(new Post("Post 3", "URL3", "Post Text 3"));
-postList.addPost(new Post("Post 4", "URL4", "Post Text 4"));
+class Controller {
 
-let accountList = new AccountList([
-    new PostingAccount("Angi", postList),
-    new PostingAccount("Josef", postList, new Set([postList.posts[0], postList.posts[1]])),
-    new PostingAccount("Robin", postList, new Set([postList.posts[2], postList.posts[3]]))
-]);
-let currentAccount: PostingAccount | null = null;
-let currentPost = null;
+    accountList: AccountList = new AccountList([]);
 
-let accountListElement = document.getElementById("account-list");
-let postListElement = document.getElementById("post-list");
-let postTextArea = document.getElementById("post-text");
+    constructor(public view: View) {
+        let editAccountButton = document.querySelector("#accounts-section .action .edit");
+        editAccountButton!.addEventListener("click", _ => this.editCurrentAccount());
+        
+        let addAccountButton = document.querySelector("#accounts-section .action .add");
+        addAccountButton!.addEventListener("click", _ => this.addAccount());
 
-loadList(accountListElement, accountList.getAccounts().map(account => account.name));
-if (accountListElement) generateListSelector(accountListElement, (_account, index) => {
-    currentAccount = accountList.getAccounts()[index];
-    loadList(postListElement, currentAccount.getPostsFiltered().map(post => post.title));
-});
-if (postListElement) generateListSelector(postListElement, (_post, index) => {
-    if(currentAccount) {
-        currentPost = currentAccount.getPostsFiltered()[index];
-        loadPostText(currentPost);
+        let removeAccountButton = document.querySelector("#accounts-section .action .remove");
+        removeAccountButton!.addEventListener("click", _ => this.removeCurrentAccount());
+
+        let acceptPostButton = document.querySelector("#post-text-section .action .accept");
+        acceptPostButton!.addEventListener("click", _ => this.acceptPost());
+
+        let declinePostButton = document.querySelector("#post-text-section .action .decline");
+        declinePostButton!.addEventListener("click", _ => this.declinePost());
+
+        let deferPostButton = document.querySelector("#post-text-section .action .defer");
+        deferPostButton!.addEventListener("click", _ => this.deferPost());
     }
-});
 
-function generateListSelector(list: HTMLElement, callback?: ((element: Element, index: number) => void) | undefined) {
-    list.addEventListener("click", (event) => {
-        Array.from(list.children).forEach((element, index) => {
-            element.removeAttribute("selected");
-            if(element == event.target) {
-                element.toggleAttribute("selected");
-                if(callback) callback(element, index);
-            }
-        })
-    });
-}
-
-function loadPostText(post: Post) {
-    if(!postTextArea) { console.log("No text area found."); return; }
-    postTextArea.innerHTML = post.text + '\n\n' + post.url;
-}
-
-function clearPostText() {
-    if(!postTextArea) { console.log("No text area found."); return; }
-    postTextArea.innerHTML = "";
-}
-
-function loadList(list: HTMLElement | null, innerHTMLs: string[]) {
-    if(!list) { console.log("No list given."); return; }
-    Array.from(list.children).forEach(element => element.remove());
-    for(let innerHTML of innerHTMLs) {
-        let listItem = document.createElement("li");
-        listItem.innerHTML = innerHTML;
-        list.appendChild(listItem);
+    addAccount() {
+        if(!this.accountList.currentAccount) return;
+        let userInput = prompt("Bitte Accountnamen eingeben");
+        if(!userInput) return;
+        //TODO change postList, remove "if(this.accountList.currentAccount)"
+        let newAccount = new PostingAccount(userInput, this.accountList.currentAccount.postList);
+        this.accountList.addAccount(newAccount);
+        this.accountList.currentAccount = newAccount;
+        this.setCurrentPost(this.accountList.currentAccount.getPostsFiltered()[0])
+        this.repaintView();
     }
+    
+    editCurrentAccount() {
+        if(!this.accountList.currentAccount) return;
+        let userInput = prompt("Bitte neuen Accountnamen eingeben");
+        if(!userInput) return;
+        this.accountList.currentAccount.setTitle(userInput);
+        this.repaintView();
+    }
+    
+    removeCurrentAccount() {
+        if(!this.accountList.currentAccount) return;
+        if(!confirm("Wollen Sie den Account "+this.accountList.currentAccount.title+" wirklich löschen?")) return;
+        accountList.removeAccount(this.accountList.currentAccount);
+        this.accountList.currentAccount = null;
+        this.setCurrentPost(null)
+        this.repaintView();
+    } 
+    
+    acceptPost() {
+        if(!this.getCurrentPost() || !this.accountList.currentAccount) return;
+        this.accountList.currentAccount.postList.putPostLast(this.getCurrentPost()!);
+        navigator.clipboard.writeText(this.getCurrentPost()!.getTextForPosting());
+        this.repaintView();
+    }
+    
+    declinePost() {
+        if(!this.accountList.currentAccount || !this.getCurrentPost()) return;
+        this.accountList.currentAccount.postList.putPostLast(this.getCurrentPost()!);
+        this.repaintView();
+    }
+    
+    deferPost() {
+        if(!this.accountList.currentAccount || !this.getCurrentPost()) return;
+        this.accountList.currentAccount.postList.deferPost(this.getCurrentPost()!);
+        this.repaintView();
+    }
+
+    getAccountById(accountId: number): PostingAccount {
+        return this.accountList.getAccountById(accountId);
+    }
+
+    getPostById(postId: number): Post {
+        if(!this.getCurrentAccount()) throw "No post list found";
+        return this.getCurrentAccount()!.postList.getPostById(postId);
+    }
+
+    repaintView() {
+        this.view.displayAccountList(this.accountList.accounts);
+        if(this.accountList.currentAccount) {
+            this.view.displayPostList(this.accountList.currentAccount.getPostsFiltered());
+        } else {
+            this.view.displayPostList([]);
+        }
+        if(this.getCurrentPost()) {
+            this.view.displayPostText(this.getCurrentPost()!);
+        } else {
+            this.view.clearPostText();
+        }
+    }
+    
+    getAccountList() { 
+        return this.accountList;
+    }
+
+    setAccountList(accountList: AccountList) { 
+        this.accountList = accountList;
+        this.repaintView();
+    }
+    
+    getCurrentAccount() { 
+        return this.accountList.currentAccount; 
+    }
+    
+    setCurrentAccount(account: PostingAccount | null) { 
+        this.accountList.setCurrentAccount(account);
+        this.repaintView();
+    }
+    
+    getCurrentPost() { 
+        if(!this.accountList.getCurrentAccount()) return null;
+        return this.accountList.getCurrentAccount()!.getCurrentPost();
+    }
+    
+    setCurrentPost(post: Post | null) { 
+        if(!this.accountList.getCurrentAccount()) return;
+        this.accountList.getCurrentAccount()!.setCurrentPost(post);
+        this.repaintView();
+    }
+    
 }
-
-function clearList(list: HTMLElement | null) {
-    loadList(list, []);
-}
-
-function addAccount() {
-    if(!accountListElement) { console.log("No account list found."); return; }
-    let userInput = prompt("Bitte Accountnamen eingeben");
-    if(!userInput) return;
-    let listItem = document.createElement("li");
-    listItem.innerHTML = userInput;
-    accountListElement.appendChild(listItem);
-    accountList.addAccount(new PostingAccount(userInput, postList));
-}
-
-function editCurrentAccount() {
-    if(!accountListElement || !currentAccount) { console.log("No account list or current account found."); return; }
-    let listItem = document.querySelector('#account-list li[selected]');
-    if(!listItem) { console.log("No list item found"); return; }
-    let userInput = prompt("Bitte neuen Accountnamen eingeben");
-    if(!userInput) return;
-    listItem.innerHTML = userInput;
-    currentAccount.setName(userInput);
-}
-
-function removeCurrentAccount() {
-    if(!accountListElement || !currentAccount) { console.log("No account list or current account found."); return; }
-    let listItem = document.querySelector('#account-list li[selected]');
-    if(!listItem) { console.log("No list item found"); return; }
-    if(!confirm("Wollen Sie den Account "+currentAccount.name+" wirklich löschen?")) return;
-    listItem.remove();
-    accountList.removeAccount(currentAccount);
-    clearList(postListElement);
-    clearPostText();
-}
-
-let addAccountButton = document.querySelector("#accounts-section .action .add");
-if(addAccountButton) addAccountButton.addEventListener("click", addAccount);
-
-let editAccountButton = document.querySelector("#accounts-section .action .edit");
-if(editAccountButton) editAccountButton.addEventListener("click", editCurrentAccount);
-
-let removeAccountButton = document.querySelector("#accounts-section .action .remove");
-if(removeAccountButton) removeAccountButton.addEventListener("click", removeCurrentAccount);

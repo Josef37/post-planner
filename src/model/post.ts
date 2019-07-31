@@ -11,4 +11,8 @@ class Post {
         this.id = Post.runningId++;
     }
 
+    getTextForPosting() {
+        return this.text + '\n\n' + this.url;
+    }
+
 }

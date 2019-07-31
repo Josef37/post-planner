@@ -1,8 +1,15 @@
 class PostingAccount {
 
-    constructor(public name: string,
+    //TODO: How?
+    static runningId: number = 0;
+
+    id: number;
+    currentPost: Post | null = null;
+
+    constructor(public title: string,
                 public postList: PostList, 
                 public filteredPosts = new Set()) {
+        this.id = PostingAccount.runningId++;
     }
 
     addPost(post: Post) {
@@ -25,7 +32,15 @@ class PostingAccount {
         return this.postList.posts.filter(post => !this.filteredPosts.has(post));
     }
 
-    setName(name: string) { this.name = name; }
-    getName() { return this.name; }
+    setTitle(title: string) { this.title = title; }
+    getTitle() { return this.title; }
+
+    getCurrentPost() { 
+        return this.currentPost; 
+    }
+    
+    setCurrentPost(post: Post | null) { 
+        this.currentPost = post;
+    }
 
 }
