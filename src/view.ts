@@ -1,4 +1,8 @@
-class View {
+import { Controller } from "./controller";
+import { PostingAccount } from "./model/posting-account";
+import { Post } from "./model/post";
+
+export class View {
 
     accountListElement = document.getElementById("account-list");
     postListElement = document.getElementById("post-list");
@@ -37,7 +41,7 @@ class View {
 
     makePostListSelector() {
         View.makeListSelector(this.postListElement, postId => {
-            if(!controller.getCurrentAccount()) return;
+            if(!this.controller.getCurrentAccount()) return;
             this.controller.setCurrentPost(this.controller.getPostById(postId));
         });
     }

@@ -1,6 +1,26 @@
-class PostList {
+import { Post } from "./post";
 
+export class PostList {
+    
+    static runningId: number = 0;
+
+    id: number;
     posts: Post[] = [];
+
+    constructor() {}
+
+    init(posts: Post[] = []): PostList {
+        this.id = PostList.runningId++;
+        this.posts = posts;
+        return this;
+    }
+
+    static fromJSON({id, posts}) {
+        let postList = new PostList();
+        postList.id = id;
+        postList.posts = posts;
+        return postList;
+    }
 
     addPost(post: Post): void {
         this.posts.push(post);

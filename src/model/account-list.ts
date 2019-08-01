@@ -1,4 +1,6 @@
-class AccountList {
+import { PostingAccount } from "./posting-account";
+
+export class AccountList {
 
     currentAccount: PostingAccount | null = null;
     

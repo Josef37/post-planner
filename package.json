@@ -5,24 +5,23 @@
   "main": "bin/main.js",
   "dependencies": {},
   "devDependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.5",
-    "@babel/preset-typescript": "^7.3.3",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.7",
+    "browserify": "^16.3.0",
     "chai": "^4.2.0",
     "electron": "^6.0.0",
     "electron-builder": "^21.1.5",
     "mocha": "^6.2.0",
     "ts-node": "^8.3.0",
-    "typescript": "^3.5.3"
+    "tsify": "^4.0.1",
+    "typescript": "^3.5.3",
+    "watchify": "^3.11.1"
   },
   "scripts": {
-    "start": "electron ./bin/main.js",
+    "start": "electron ./main.js",
     "test": "mocha -r ts-node/register test/**/*.spec.ts",
-    "build": "babel ./src --out-dir bin --extensions \".ts,.tsx\" --copy-files",
-    "watch": "babel --watch ./src --out-dir bin --extensions \".ts,.tsx\" --copy-files",
-    "type-check": "tsc",
+    "build": "browserify src/script.ts -p [ tsify ] > bin/bundle.js",
+    "watch": "watchify src/script.ts -p [ tsify ] -o bin/bundle.js",
     "dist": "electron-builder"
   },
   "repository": {

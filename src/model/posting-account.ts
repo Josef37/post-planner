@@ -1,15 +1,32 @@
-class PostingAccount {
+import { Post } from './post';
+import { PostList } from './post-list';
+
+export class PostingAccount {
 
     //TODO: How?
     static runningId: number = 0;
 
     id: number;
     currentPost: Post | null = null;
+    title: string;
+    postList: PostList;
+    filteredPosts: Set<Post>;
 
-    constructor(public title: string,
-                public postList: PostList, 
-                public filteredPosts = new Set()) {
+    constructor() {}
+
+    init(title: string, postList: PostList, filteredPosts: Set<Post> = new Set()): PostingAccount {
         this.id = PostingAccount.runningId++;
+        [this.title, this.postList, this.filteredPosts] = [title, postList, filteredPosts];
+        return this;
+    }
+
+    static fromJSON({id, title, postList, filteredPosts}): PostingAccount {
+        let account = new PostingAccount();
+        account.id = id;
+        account.title = title;
+        account.postList = postList;
+        account.filteredPosts = new Set(filteredPosts);
+        return account;
     }
 
     addPost(post: Post) {

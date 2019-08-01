@@ -1,4 +1,10 @@
-class Controller {
+import { AccountList } from "./model/account-list";
+import { PostingAccount } from "./model/posting-account";
+import { Post } from "./model/post";
+import { View } from "./view";
+import { Persistence } from "./persistence";
+
+export class Controller {
 
     accountList: AccountList = new AccountList([]);
 
@@ -27,11 +33,11 @@ class Controller {
         let userInput = prompt("Bitte Accountnamen eingeben");
         if(!userInput) return;
         //TODO change postList, remove "if(this.accountList.currentAccount)"
-        let newAccount = new PostingAccount(userInput, this.accountList.currentAccount.postList);
+        let newAccount = new PostingAccount().init(userInput, this.accountList.currentAccount.postList);
         this.accountList.addAccount(newAccount);
         this.accountList.currentAccount = newAccount;
         this.setCurrentPost(this.accountList.currentAccount.getPostsFiltered()[0])
-        this.repaintView();
+        this.repaintAndSave();
     }
     
     editCurrentAccount() {
@@ -39,35 +45,35 @@ class Controller {
         let userInput = prompt("Bitte neuen Accountnamen eingeben");
         if(!userInput) return;
         this.accountList.currentAccount.setTitle(userInput);
-        this.repaintView();
+        this.repaintAndSave();
     }
     
     removeCurrentAccount() {
         if(!this.accountList.currentAccount) return;
         if(!confirm("Wollen Sie den Account "+this.accountList.currentAccount.title+" wirklich löschen?")) return;
-        accountList.removeAccount(this.accountList.currentAccount);
+        this.accountList.removeAccount(this.accountList.currentAccount);
         this.accountList.currentAccount = null;
         this.setCurrentPost(null)
-        this.repaintView();
+        this.repaintAndSave();
     } 
     
     acceptPost() {
         if(!this.getCurrentPost() || !this.accountList.currentAccount) return;
         this.accountList.currentAccount.postList.putPostLast(this.getCurrentPost()!);
         navigator.clipboard.writeText(this.getCurrentPost()!.getTextForPosting());
-        this.repaintView();
+        this.repaintAndSave();
     }
     
     declinePost() {
         if(!this.accountList.currentAccount || !this.getCurrentPost()) return;
         this.accountList.currentAccount.postList.putPostLast(this.getCurrentPost()!);
-        this.repaintView();
+        this.repaintAndSave();
     }
     
     deferPost() {
         if(!this.accountList.currentAccount || !this.getCurrentPost()) return;
         this.accountList.currentAccount.postList.deferPost(this.getCurrentPost()!);
-        this.repaintView();
+        this.repaintAndSave();
     }
 
     getAccountById(accountId: number): PostingAccount {
@@ -92,6 +98,25 @@ class Controller {
             this.view.clearPostText();
         }
     }
+
+    load() {
+        this.accountList = Persistence.load();
+        this.repaintView();
+    }
+
+    save() {
+        new Persistence(this.accountList).save();
+    }
+
+    undo() {
+        this.accountList = Persistence.undo();
+        this.repaintView();
+    }
+
+    repaintAndSave() {
+        this.repaintView();
+        this.save();
+    }
     
     getAccountList() { 
         return this.accountList;
@@ -99,7 +124,7 @@ class Controller {
 
     setAccountList(accountList: AccountList) { 
         this.accountList = accountList;
-        this.repaintView();
+        this.repaintAndSave();
     }
     
     getCurrentAccount() { 
