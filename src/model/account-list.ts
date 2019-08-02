@@ -1,10 +1,12 @@
 import { PostingAccount } from "./posting-account";
+import { PostList } from "./post-list";
 
 export class AccountList {
 
     currentAccount: PostingAccount | null = null;
     
-    constructor(public accounts: PostingAccount[]) {}
+    constructor(public accounts: PostingAccount[],
+                public postLists: PostList[]) {}
 
     addAccount(account: PostingAccount) {
         this.accounts.push(account);
@@ -23,6 +25,17 @@ export class AccountList {
     
     setCurrentAccount(account: PostingAccount | null) { 
         this.currentAccount = account;
+    }
+
+    addPostList(postList: PostList) {
+        this.postLists.push(postList);
+    }
+
+    removePostList(postList: PostList) {
+        if(this.accounts.some(account => account.postList == postList))
+            throw "Post list is still in use";
+        let index = this.postLists.indexOf(postList);
+        if(index >= 0) this.postLists.splice(index, 1);
     }
 
     getAccountById(accountId: number): PostingAccount {

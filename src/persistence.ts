@@ -79,7 +79,7 @@ export class Persistence {
         PostList.runningId = 1 + Persistence.getMaxId(postLists);
         PostingAccount.runningId = 1 + Persistence.getMaxId(accounts);
 
-        return new AccountList(accounts);
+        return new AccountList(accounts, postLists.filter(list => list));
     }
 
     save() {

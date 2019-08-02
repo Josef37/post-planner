@@ -8,11 +8,7 @@ export class View {
     postListElement = document.getElementById("post-list");
     postTextArea = document.getElementById("post-text");
 
-    controller: Controller;
-
-    constructor() {
-        this.controller = new Controller(this);
-
+    constructor(public controller: Controller) {
         this.makeAccountListSelector();
         this.makePostListSelector();
     }

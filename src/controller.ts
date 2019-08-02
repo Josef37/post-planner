@@ -6,9 +6,12 @@ import { Persistence } from "./persistence";
 
 export class Controller {
 
-    accountList: AccountList = new AccountList([]);
+    view: View;
 
-    constructor(public view: View) {
+    constructor(public accountList: AccountList) {
+        this.view = new View(this);
+        this.repaintView();
+
         let editAccountButton = document.querySelector("#accounts-section .action .edit");
         editAccountButton!.addEventListener("click", _ => this.editCurrentAccount());
         

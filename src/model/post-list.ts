@@ -5,19 +5,22 @@ export class PostList {
     static runningId: number = 0;
 
     id: number;
+    title: string;
     posts: Post[] = [];
 
     constructor() {}
 
-    init(posts: Post[] = []): PostList {
+    init(title: string, posts: Post[] = []): PostList {
         this.id = PostList.runningId++;
+        this.title = title;
         this.posts = posts;
         return this;
     }
 
-    static fromJSON({id, posts}) {
+    static fromJSON({id, title, posts}) {
         let postList = new PostList();
         postList.id = id;
+        postList.title = title;
         postList.posts = posts;
         return postList;
     }
