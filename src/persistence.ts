@@ -7,7 +7,7 @@ import fs from 'fs';
 export class Persistence {
 
     static snapshotDir = './data/';
-    static maxSnapshots = 10;
+    static maxSnapshots = Number.MAX_VALUE;
     
     posts: Post[] = [];
     postsLists: PostList[] = [];
