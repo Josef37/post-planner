@@ -14,7 +14,7 @@ export class View {
     }
 
     displayAccountList(accounts: PostingAccount[]) {
-        View.displayList(this.accountListElement, accounts);
+        View.displayList(this.accountListElement, accounts.map(account => { return {id: account.id, innerHTML: account.title}; }));
         let currentAccount = this.controller.getCurrentAccount();
         if(currentAccount) {
             document.querySelector('#account-list li[data-id="'+currentAccount.id+'"]')!.toggleAttribute("selected");
@@ -22,7 +22,12 @@ export class View {
     }
 
     displayPostList(posts: Post[]) {
-        View.displayList(this.postListElement, posts);
+        View.displayList(this.postListElement, posts.map(post => { 
+            return {
+                id: post.id,
+                innerHTML: `<a href="${post.url}" target="_blank">Link</a> ${post.title}`
+            };
+        }));
         let currentPost = this.controller.getCurrentPost();
         if(currentPost) {
             document.querySelector('#post-list li[data-id="'+currentPost.id+'"]')!.toggleAttribute("selected");
@@ -53,12 +58,12 @@ export class View {
     }
 
     //TODO: Show Post List Elements with Link and title (for hovering)
-    static displayList(list: HTMLElement | null, elements: {id: number, title: string}[]) {
+    static displayList(list: HTMLElement | null, elements: {id: number, innerHTML: string}[]) {
         if(!list) { console.log("No list given."); return; }
         Array.from(list.children).forEach(element => element.remove());
         for(let element of elements) {
             let listItem = document.createElement("li");
-            listItem.innerText = element.title;
+            listItem.innerHTML = element.innerHTML;
             listItem.setAttribute("data-id", String(element.id));
             list.appendChild(listItem);
         }

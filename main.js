@@ -16,6 +16,11 @@ function createWindow() {
     }
   }); // and load the index.html of the app.
 
+  win.webContents.on('new-window', function(e, url) {
+    e.preventDefault();
+    require('electron').shell.openExternal(url);
+  });
+
   win.loadFile('index.html');
 }
 
