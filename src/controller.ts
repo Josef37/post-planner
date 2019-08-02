@@ -18,6 +18,12 @@ export class Controller {
         let removeAccountButton = document.querySelector("#accounts-section .action .remove");
         removeAccountButton!.addEventListener("click", _ => this.removeCurrentAccount());
 
+        let addPostButton = document.querySelector("#posts-section .action .add");
+
+        let removePostButton = document.querySelector("#posts-section .action .remove");
+
+        let editPostButton = document.querySelector("#posts-section .action .edit");
+
         let acceptPostButton = document.querySelector("#post-text-section .action .accept");
         acceptPostButton!.addEventListener("click", _ => this.acceptPost());
 
@@ -26,6 +32,8 @@ export class Controller {
 
         let deferPostButton = document.querySelector("#post-text-section .action .defer");
         deferPostButton!.addEventListener("click", _ => this.deferPost());
+
+        let editPostTextButton = document.querySelector("#post-text-section .action .edit");
     }
 
     addAccount() {

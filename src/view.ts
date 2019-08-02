@@ -56,6 +56,7 @@ export class View {
         this.postTextArea.innerHTML = "";
     }
 
+    //TODO: Show Post List Elements with Link and title (for hovering)
     static displayList(list: HTMLElement | null, elements: {id: number, title: string}[]) {
         if(!list) { console.log("No list given."); return; }
         Array.from(list.children).forEach(element => element.remove());

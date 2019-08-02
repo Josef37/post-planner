@@ -6,12 +6,10 @@ import { View } from "./view";
 import { Persistence } from "./persistence";
 
 let postList = new PostList().init();
-let post;
-postList.addPost(new Post().init("Post 1", "URL1", "Post Text 1"));
-postList.addPost(post = new Post().init("Post 2", "URL2", "Post Text 2"));
-postList.addPost(new Post().init("Post 3", "URL3", "Post Text 3"));
-postList.addPost(new Post().init("Post 4", "URL4", "Post Text 4"));
-postList.removePost(post);
+for (let i = 0; i < 10; i++) {
+    postList.addPost(new Post().init("Post "+i, "URL"+i, "Post Text "+i));
+}
+postList.addPost(new Post().init("1111111111111111111111111111111111111111111111111111111111111111111111","",""))
 
 let accountList = new AccountList([
     new PostingAccount().init("Angi", postList),
@@ -21,7 +19,5 @@ let accountList = new AccountList([
 
 let view = new View();
 let controller = view.controller;
-controller.load();
-
-controller.save();
-controller.undo();
+controller.setAccountList(accountList);
+// controller.load();

@@ -44,8 +44,11 @@ body > section.double {
 }
 
 section > .display {
-    flex: 1;
+    flex: auto;
+    width: calc(100% - 60px);
     margin-right: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 section > .action {
@@ -69,5 +72,10 @@ section > .action {
 
     body > section {
         width: 90%;
+        height: 25%;
+    }
+
+    body > section.double {
+        height: 50%;
     }
 }
