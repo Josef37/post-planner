@@ -7,21 +7,18 @@
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.7",
-    "browserify": "^16.3.0",
     "chai": "^4.2.0",
     "electron": "^6.0.0",
     "electron-builder": "^21.1.5",
     "mocha": "^6.2.0",
     "ts-node": "^8.3.0",
-    "tsify": "^4.0.1",
-    "typescript": "^3.5.3",
-    "watchify": "^3.11.1"
+    "typescript": "^3.5.3"
   },
   "scripts": {
     "start": "electron ./main.js",
     "test": "mocha -r ts-node/register test/**/*.spec.ts",
-    "build": "browserify src/script.ts -p [ tsify ] > bin/bundle.js",
-    "watch": "watchify src/script.ts -p [ tsify ] -o bin/bundle.js",
+    "build": "tsc",
+    "watch": "tsc -w",
     "dist": "electron-builder"
   },
   "repository": {
