@@ -4,16 +4,19 @@ html {
 
 body {
     height: 100%;
+    min-height: 600px;
     min-height: 300px;
-    max-width: 1024px;
+    max-width: 720px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body > section {
-    height: 100%;
+    width: 90%;
+    height: 25%;
     flex: 1;
     display: flex;
     padding: 10px;
@@ -22,6 +25,7 @@ body > section {
 
 body > section.double {
     flex: 2;
+    height: 50%;
 }
 
 .display ul {
@@ -37,6 +41,7 @@ body > section.double {
 }
 
 .display textarea {
+    box-sizing: border-box;
     width: 100%;
     font-family: inherit;
     font-size: inherit;
@@ -45,37 +50,20 @@ body > section.double {
 
 section > .display {
     flex: auto;
-    width: calc(100% - 60px);
+    width: calc(100% - 50px);
     margin-right: 10px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: auto;
 }
 
 section > .action {
-    width: 40px;
+    width: 30px;
     padding: 0 5px;
 }
 
 .action button {
-    width: 40px;
-    height: 40px;
-    font-size: 25px;
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
     margin-bottom: 5px;
     padding: 1px;
-}
-
-@media only screen and (max-width: 800px) {
-    body {
-        flex-direction: column;
-        min-height: 600px;
-    }
-
-    body > section {
-        width: 90%;
-        height: 25%;
-    }
-
-    body > section.double {
-        height: 50%;
-    }
 }
