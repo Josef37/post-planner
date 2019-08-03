@@ -29,9 +29,7 @@ export class View {
             };
         }));
         let currentPost = this.controller.getCurrentPost();
-        if(currentPost) {
-            document.querySelector('#post-list li[data-id="'+currentPost.id+'"]')!.toggleAttribute("selected");
-        }
+        if(currentPost) document.querySelector('#post-list li[data-id="'+currentPost.id+'"]')!.toggleAttribute("selected");
     }
 
     makeAccountListSelector() {

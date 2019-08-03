@@ -1,3 +1,6 @@
+import { PostList } from "./model/post-list";
+import { View } from "./view";
+
 export class Dialog {
     
     static createOverlay(nodes: (string | Node)[], onconfirm?: (_: any) => any) {
@@ -32,36 +35,82 @@ export class Dialog {
     static editPostText(postText: string, onconfirm: (newPostText: string) => void) {
         let textarea = document.createElement("textarea");
         textarea.value = postText;
-        this.createOverlay([textarea], _ => onconfirm(textarea.value.trim()));
+        Dialog.createOverlay([textarea], _ => onconfirm(textarea.value.trim()));
     }
 
     static addPost(onconfirm: (title: string, url: string) => void) {
         Dialog.editPost("", "", onconfirm);
     }
 
+    static createInputDiv(id: string, labelHTML: string, inputValue: string, inputType: string = "text"): [HTMLDivElement, HTMLInputElement] {
+        let label = document.createElement("label");
+        label.setAttribute("for", id);
+        label.setAttribute("class", "text-input-label");
+        label.innerHTML = labelHTML;
+        let input = document.createElement("input");
+        input.id = id;
+        input.value = inputValue;
+        input.type = inputType;
+        let div = document.createElement("div");
+        div.className = "container";
+        div.append(label, input);
+        return [div, input];
+    }
+
     static editPost(title: string, url: string, onconfirm: (title: string, url: string) => void) {
-        let titleLabel = document.createElement("label");
-        titleLabel.setAttribute("for", "title-input");
-        titleLabel.innerHTML = "Post Titel";
-        let titleInput = document.createElement("input");
-        titleInput.id = "title-input";
-        titleInput.value = title;
-        let titleDiv = document.createElement("div");
-        titleDiv.className = "container";
-        titleDiv.append(titleLabel, titleInput);
+        let [titleDiv, titleInput] = this.createInputDiv("title-input", "Post Titel", title);
+        let [urlDiv, urlInput] = this.createInputDiv("url-input", "Post URL", url, "url");
 
-        let urlLabel = document.createElement("label");
-        urlLabel.setAttribute("for", "url-input");
-        urlLabel.innerHTML = "Post URL";
-        let urlInput = document.createElement("input");
-        urlInput.type = "url";
-        urlInput.value = "url-input";
-        urlInput.value = url;
-        let urlDiv = document.createElement("div");
-        urlDiv.className = "container";
-        urlDiv.append(urlLabel, urlInput);
+        Dialog.createOverlay([titleDiv, urlDiv], _ => onconfirm(titleInput.value, urlInput.value));
+    }
 
-        this.createOverlay([titleDiv, urlDiv], _ => onconfirm(titleInput.value, urlInput.value));
+    static addAccount(postLists: PostList[], onconfirm: (title: string, postListId: number, postIds: number[]) => void) {
+        let leftCol = document.createElement("div");
+        leftCol.setAttribute("class", "column");
+        let rightCol = document.createElement("div");
+        rightCol.setAttribute("class", "column");
+
+        let [titleDiv, titleInput] = this.createInputDiv("title-input", "Account Titel", "");
+        leftCol.appendChild(titleDiv);
+
+        let postListsList = document.createElement("ul");
+        View.displayList(postListsList, postLists.map(postList => { 
+            return {
+                id: postList.id,
+                innerHTML: `<input type="radio" name="post-list" id="post-list-${postList.id}" value="${postList.id}">` + 
+                    `<label for="post-list-${postList.id}">${postList.title}</label>`
+            };
+        }));
+        leftCol.appendChild(postListsList);
+
+        let postList: HTMLUListElement;
+        if(postLists.length > 0) {
+            postList = document.createElement("ul");
+            let posts = postLists[0].posts.concat().sort((a, b) => a.id - b.id);
+            View.displayList(postList, posts.map(post => { 
+                return {
+                    id: post.id,
+                    innerHTML: `<input type="checkbox" checked name="post-${post.id}" id="post-${post.id}" value="${post.id}">` + 
+                        `<label for="post-${post.id}">` + 
+                        `<a href="${post.url}" target="_blank">Link</a> ${post.title}</label>`
+                };
+            }));
+            rightCol.appendChild(postList);
+        }
+
+        Dialog.createOverlay([leftCol, rightCol], _ => {
+            let title = titleInput.value;
+            let postListId = Number(Array.from(postListsList.children)
+                .map(child => child.getElementsByTagName("input")[0])
+                .find(input => input.checked)
+                .value);
+            let postIds = [];
+            if(postList) postIds = Array.from(postList.children)
+                .map(child => child.getElementsByTagName("input")[0])
+                .filter(input => !input.checked)
+                .map(input => Number(input.value));
+            onconfirm(title, postListId, postIds);
+        });
     }
 
 }

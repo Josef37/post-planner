@@ -45,8 +45,19 @@ export class AccountList {
     }
 
     getAccountById(accountId: number): PostingAccount {
-        let filtered = this.accounts.filter(account => account.id === accountId);
-        if(filtered.length === 1) return filtered[0];
-        throw "Account not found or ambigous";
+        return this.accounts.find(account => account.id === accountId);
+    }
+
+    getPostListById(postListId: number): PostList {
+        return this.postLists.find(list => list.id === postListId);
+    }
+    
+    getPostById(postId: number): Post {
+        let post: Post;
+        for(let list of this.postLists) {
+            post = list.getPostById(postId);
+            if(post) break;
+        }
+        return post;
     }
 }

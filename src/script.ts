@@ -2,13 +2,10 @@ import { PostList } from "./model/post-list";
 import { Post } from "./model/post";
 import { PostingAccount } from "./model/posting-account";
 import { AccountList } from "./model/account-list";
-import { View } from "./view";
-import { Persistence } from "./persistence";
 import { Controller } from "./controller";
-import { Dialog } from "./dialog";
 
 let postList = new PostList().init("Post List 1");
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 30; i++) {
     postList.addPost(new Post().init("Post "+i, "https://www.google.com/search?q="+i, "Post Text "+i));
 }
 postList.addPost(new Post().init("0_1_2_3_4_5_6_7_8_9_10_11_12_13_14_15_16_17_18_19_20_0_1_2_3_4_5_6_7_8_9_10_11_12_13_14_15_16_17_18_19_20_0_1_2_3_4_5_6_7_8_9_10_11_12_13_14_15_16_17_18_19_20","","Ridiculosly long title"))

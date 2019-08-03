@@ -53,9 +53,7 @@ export class PostList {
     }
 
     getPostById(postId: number): Post {
-        let filtered = this.posts.filter(post => post.id === postId);
-        if(filtered.length === 1) return filtered[0];
-        throw "Post not found or ambigous";
+        return this.posts.find(post => post.id === postId);
     }
 
 }

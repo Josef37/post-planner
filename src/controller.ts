@@ -23,7 +23,6 @@ export class Controller {
         //TODO: implement
         let editAccountButton = document.querySelector("#account-actions .edit"); 
         editAccountButton!.addEventListener("click", _ => this.editCurrentAccount());
-        //TODO: implement
         let addAccountButton = document.querySelector("#account-actions .add"); 
         addAccountButton!.addEventListener("click", _ => this.addAccount());
         //TODO: implement
@@ -48,15 +47,16 @@ export class Controller {
     }
 
     addAccount() {
-        // if(!this.accountList.currentAccount) return;
-        // let userInput = prompt("Bitte Accountnamen eingeben");
-        // if(!userInput) return;
-        // //TODO change postList, remove "if(this.accountList.currentAccount)"
-        // let newAccount = new PostingAccount().init(userInput, this.accountList.currentAccount.postList);
-        // this.accountList.addAccount(newAccount);
-        // this.accountList.currentAccount = newAccount;
-        // this.setCurrentPost(this.accountList.currentAccount.getPostsFiltered()[0])
-        // this.repaintAndSave();
+        Dialog.addAccount(this.accountList.postLists, (title, postListId, postIds) => {
+            let newAccount = new PostingAccount().init(
+                title, 
+                this.accountList.getPostListById(postListId),
+                new Set(postIds.map(postId => this.accountList.getPostById(postId)))
+            );
+            this.accountList.addAccount(newAccount);
+            this.accountList.currentAccount = newAccount;
+            this.repaintAndSave();
+        });
     }
     
     editCurrentAccount() {
@@ -132,11 +132,6 @@ export class Controller {
         return this.accountList.getAccountById(accountId);
     }
 
-    getPostById(postId: number): Post {
-        if(!this.getCurrentAccount()) throw "No post list found";
-        return this.getCurrentAccount()!.postList.getPostById(postId);
-    }
-
     repaintView() {
         this.view.displayAccountList(this.accountList.accounts);
         if(this.accountList.currentAccount) {
@@ -200,4 +195,7 @@ export class Controller {
         this.repaintView();
     }
     
+    getPostById(postId: number) {
+        return this.accountList.getPostById(postId);
+    }
 }

@@ -33,7 +33,7 @@ body > section.double {
     height: 50%;
 }
 
-.display ul {
+ul {
     margin: 0;
     padding: 0;
     list-style-type: none;
@@ -42,9 +42,13 @@ body > section.double {
     min-width: 100%;
 }
 
-.display ul li[selected] {
-    background-color: blue;
+ul li[selected] {
+    background-color: #94006c;
     color: white
+}
+
+ul li[selected] a {
+    color: #e1cc9f;
 }
 
 .display textarea {
@@ -116,15 +120,24 @@ section > .action {
 .dialog textarea {
     width: 100%;
     height: calc(100% - 5em);
+    resize: none;
 }
 
 .dialog .container {
     margin-bottom: 1em;
 }
 
-.dialog label {
-    display: inline-block;
-    width: 80px;
-    text-align: right;
+.dialog .text-input-label {
+    display: block;
+    width: 100px;
     margin-right: .5em;
+    margin-bottom: .1em;
+}
+
+.dialog .column {
+    width: 50%;
+    display: inline-block;
+    overflow: auto;
+    vertical-align: top;
+    max-height: calc(100% - 5em);
 }
