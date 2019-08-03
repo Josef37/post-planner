@@ -1,5 +1,5 @@
 export class Dialog {
-
+    
     static createOverlay(nodes: (string | Node)[], onconfirm?: (_: any) => any) {
         let overlay = document.createElement("div");
         overlay.className = "overlay";
@@ -36,9 +36,32 @@ export class Dialog {
     }
 
     static addPost(onconfirm: (title: string, url: string) => void) {
+        Dialog.editPost("", "", onconfirm);
+    }
+
+    static editPost(title: string, url: string, onconfirm: (title: string, url: string) => void) {
+        let titleLabel = document.createElement("label");
+        titleLabel.setAttribute("for", "title-input");
+        titleLabel.innerHTML = "Post Titel";
         let titleInput = document.createElement("input");
+        titleInput.id = "title-input";
+        titleInput.value = title;
+        let titleDiv = document.createElement("div");
+        titleDiv.className = "container";
+        titleDiv.append(titleLabel, titleInput);
+
+        let urlLabel = document.createElement("label");
+        urlLabel.setAttribute("for", "url-input");
+        urlLabel.innerHTML = "Post URL";
         let urlInput = document.createElement("input");
         urlInput.type = "url";
-        this.createOverlay([titleInput, urlInput], _ => onconfirm(titleInput.value, urlInput.value));
+        urlInput.value = "url-input";
+        urlInput.value = url;
+        let urlDiv = document.createElement("div");
+        urlDiv.className = "container";
+        urlDiv.append(urlLabel, urlInput);
+
+        this.createOverlay([titleDiv, urlDiv], _ => onconfirm(titleInput.value, urlInput.value));
     }
+
 }

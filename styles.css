@@ -2,6 +2,11 @@
     box-sizing: border-box;
 }
 
+button, textarea, input {
+    font-family: inherit;
+    font-size: inherit;
+}
+
 html {
     height: 100%;
 }
@@ -33,6 +38,8 @@ body > section.double {
     padding: 0;
     list-style-type: none;
     cursor: pointer;
+    width: fit-content;
+    min-width: 100%;
 }
 
 .display ul li[selected] {
@@ -90,14 +97,14 @@ section > .action {
     max-width: 720px;
     min-width: 350px;
     margin: auto;
-    padding: 1em;
+    padding: 2em;
     position: relative;
 }
 
 .dialog .button-row {
     position: absolute;
-    width: calc(100% - 2em);
-    bottom: 1em;
+    width: calc(100% - 2 * 2em);
+    bottom: 2em;
     text-align: right;
 }
 
@@ -111,7 +118,13 @@ section > .action {
     height: calc(100% - 5em);
 }
 
-button, textarea {
-    font-family: inherit;
-    font-size: inherit;
+.dialog .container {
+    margin-bottom: 1em;
+}
+
+.dialog label {
+    display: inline-block;
+    width: 80px;
+    text-align: right;
+    margin-right: .5em;
 }

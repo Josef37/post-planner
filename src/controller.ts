@@ -32,10 +32,10 @@ export class Controller {
 
         let addPostButton = document.querySelector("#post-actions .add"); 
         addPostButton!.addEventListener("click", _ => this.addPost());
-        //TODO: implement
         let removePostButton = document.querySelector("#post-actions .remove"); 
-        //TODO: implement
+        removePostButton!.addEventListener("click", _ => this.filterPost());
         let editPostButton = document.querySelector("#post-actions .edit");
+        editPostButton!.addEventListener("click", _ => this.editPost());
 
         let acceptPostButton = document.querySelector("#post-text-actions .accept");
         acceptPostButton!.addEventListener("click", _ => this.acceptPost());
@@ -80,7 +80,25 @@ export class Controller {
         Dialog.addPost((title, url) => {
             this.accountList.addPost(title, url);
             this.repaintAndSave();
-        })
+        });
+    }
+
+    // filters current post for current account
+    filterPost() {
+        if(!this.getCurrentAccount() || !this.getCurrentPost()) return;
+        this.getCurrentAccount().filterPost(this.getCurrentPost());
+        this.getCurrentAccount().setCurrentPost(null);
+        this.repaintAndSave();
+    }
+
+    editPost() {
+        let post = this.getCurrentPost();
+        if(!post) return;
+        Dialog.editPost(post.title, post.url, (title, url) => {
+            post.title = title;
+            post.url = url;
+            this.repaintAndSave();
+        });
     }
     
     acceptPost() {
