@@ -4,13 +4,14 @@ html {
 
 body {
     height: 100%;
-    min-height: 600px;
-    min-height: 300px;
+    min-height: 500px;
+    width: 90%;
     max-width: 720px;
-    display: flex;
+    min-width: 300px;
+    /* display: flex;
     flex-direction: column;
-    align-items: center;
-    margin: 0;
+    align-items: center; */
+    margin: 0 auto;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -43,6 +44,7 @@ body > section.double {
 .display textarea {
     box-sizing: border-box;
     width: 100%;
+    height: calc(100% - 5px);
     font-family: inherit;
     font-size: inherit;
     resize: none;
