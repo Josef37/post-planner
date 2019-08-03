@@ -26,4 +26,3 @@ let controller = new Controller(accountList);
 
 let dialog = new Dialog();
 dialog.createOverlay();
-setTimeout(_ => dialog.removeOverlay(), 700);

@@ -92,3 +92,16 @@ section > .action {
     width: 500px;
     margin: auto;
 }
+
+.button-row {
+    text-align: right;
+}
+
+.button-row button + button {
+    margin-left: 10px;
+}
+
+button {
+    font-family: inherit;
+    font-size: inherit;
+}
