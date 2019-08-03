@@ -12,31 +12,30 @@ export class Controller {
         this.view = new View(this);
         this.repaintView();
 
-        let editAccountButton = document.querySelector("#accounts-section .action .edit");
-        editAccountButton!.addEventListener("click", _ => this.editCurrentAccount());
-        
-        let addAccountButton = document.querySelector("#accounts-section .action .add");
-        addAccountButton!.addEventListener("click", _ => this.addAccount());
+        let undoButton = document.querySelector("#global-actions .undo"); //TODO: implement
+        undoButton.addEventListener("click", _ => this.undo());
+        let redoButton = document.querySelector("#global-actions .redo"); //TODO: implement
+        redoButton.addEventListener("click", _ => this.redo());
+        let editPostListsButton = document.querySelector("#global-actions .edit"); //TODO: implement
 
-        let removeAccountButton = document.querySelector("#accounts-section .action .remove");
+        let editAccountButton = document.querySelector("#account-actions .edit"); //TODO: implement
+        editAccountButton!.addEventListener("click", _ => this.editCurrentAccount());
+        let addAccountButton = document.querySelector("#account-actions .add"); //TODO: implement
+        addAccountButton!.addEventListener("click", _ => this.addAccount());
+        let removeAccountButton = document.querySelector("#account-actions .remove"); //TODO: implement
         removeAccountButton!.addEventListener("click", _ => this.removeCurrentAccount());
 
-        let addPostButton = document.querySelector("#posts-section .action .add");
+        let addPostButton = document.querySelector("#post-actions .add"); //TODO: implement
+        let removePostButton = document.querySelector("#post-actions .remove"); //TODO: implement
+        let editPostButton = document.querySelector("#post-actions .edit"); //TODO: implement
 
-        let removePostButton = document.querySelector("#posts-section .action .remove");
-
-        let editPostButton = document.querySelector("#posts-section .action .edit");
-
-        let acceptPostButton = document.querySelector("#post-text-section .action .accept");
+        let acceptPostButton = document.querySelector("#post-text-actions .accept");
         acceptPostButton!.addEventListener("click", _ => this.acceptPost());
-
-        let declinePostButton = document.querySelector("#post-text-section .action .decline");
+        let declinePostButton = document.querySelector("#post-text-actions .decline");
         declinePostButton!.addEventListener("click", _ => this.declinePost());
-
-        let deferPostButton = document.querySelector("#post-text-section .action .defer");
+        let deferPostButton = document.querySelector("#post-text-actions .defer");
         deferPostButton!.addEventListener("click", _ => this.deferPost());
-
-        let editPostTextButton = document.querySelector("#post-text-section .action .edit");
+        let editPostTextButton = document.querySelector("#post-text-actions .edit"); //TODO: implement
     }
 
     addAccount() {
@@ -121,6 +120,11 @@ export class Controller {
 
     undo() {
         this.accountList = Persistence.undo();
+        this.repaintView();
+    }
+
+    redo() {
+        this.accountList = Persistence.redo();
         this.repaintView();
     }
 

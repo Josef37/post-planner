@@ -10,7 +10,12 @@
       <div class="display">
         <ul id="account-list"></ul>
       </div>
-      <div class="action">
+      <div class="action" id="global-actions">
+        <button class="undo" title="Rückgängig">&#8630</button>
+        <button class="redo" title="Wiederherstellen">&#8631</button>
+        <button class="edit" title="Post Listen bearbeiten">&#9998;</button>
+      </div>
+      <div class="action" id="account-actions">
         <button class="edit" title="Account umbenennen">&#9998;</button>
         <button class="add" title="Account hinzufügen">+</button>
         <button class="remove" title="Account entfernen">-</button>
@@ -20,7 +25,7 @@
       <div class="display">
         <ul id="post-list"></ul>
       </div>
-      <div class="action">
+      <div class="action" id="post-actions">
         <button class="edit" title="Post umbenennen">&#9998;</button>
         <button class="add" title="Post hinzufügen">+</button>
         <button class="remove" title="Post für diesen Account ausschließen">-</button>
@@ -30,7 +35,7 @@
       <div class="display">
         <textarea readonly name="post-text" id="post-text" cols="30" rows="10"></textarea>
       </div>
-      <div class="action">
+      <div class="action" id="post-text-actions">
         <button class="accept" title="Post annehmen und kopieren">&#10003;</button>
         <button class="decline" title="Post ablehnen">&#10005;</button>
         <button class="defer" title="Post aufschieben">&#129107;</button>
