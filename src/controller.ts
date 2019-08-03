@@ -4,6 +4,7 @@ import { Post } from "./model/post";
 import { View } from "./view";
 import { Persistence } from "./persistence";
 import { Dialog } from "./dialog";
+import { PostList } from "./model/post-list";
 
 export class Controller {
 
@@ -14,36 +15,34 @@ export class Controller {
         this.repaintView();
 
         let undoButton = document.querySelector("#global-actions .undo"); 
-        undoButton.addEventListener("click", _ => this.undo());
+        undoButton.addEventListener("click", () => this.undo());
         let redoButton = document.querySelector("#global-actions .redo"); 
-        redoButton.addEventListener("click", _ => this.redo());
-        //TODO: implement
-        // let editPostListsButton = document.querySelector("#global-actions .edit");
+        redoButton.addEventListener("click", () => this.redo());
+        let editPostListsButton = document.querySelector("#global-actions .edit");
+        editPostListsButton!.addEventListener("click", () => this.editPostLists());
 
-        //TODO: implement
         let editAccountButton = document.querySelector("#account-actions .edit"); 
-        editAccountButton!.addEventListener("click", _ => this.editCurrentAccount());
+        editAccountButton!.addEventListener("click", () => this.editCurrentAccount());
         let addAccountButton = document.querySelector("#account-actions .add"); 
-        addAccountButton!.addEventListener("click", _ => this.addAccount());
-        //TODO: implement
+        addAccountButton!.addEventListener("click", () => this.addAccount());
         let removeAccountButton = document.querySelector("#account-actions .remove"); 
-        removeAccountButton!.addEventListener("click", _ => this.removeCurrentAccount());
+        removeAccountButton!.addEventListener("click", () => this.removeCurrentAccount());
 
         let addPostButton = document.querySelector("#post-actions .add"); 
-        addPostButton!.addEventListener("click", _ => this.addPost());
+        addPostButton!.addEventListener("click", () => this.addPost());
         let removePostButton = document.querySelector("#post-actions .remove"); 
-        removePostButton!.addEventListener("click", _ => this.filterPost());
+        removePostButton!.addEventListener("click", () => this.filterPost());
         let editPostButton = document.querySelector("#post-actions .edit");
-        editPostButton!.addEventListener("click", _ => this.editPost());
+        editPostButton!.addEventListener("click", () => this.editPost());
 
         let acceptPostButton = document.querySelector("#post-text-actions .accept");
-        acceptPostButton!.addEventListener("click", _ => this.acceptPost());
+        acceptPostButton!.addEventListener("click", () => this.acceptPost());
         let declinePostButton = document.querySelector("#post-text-actions .decline");
-        declinePostButton!.addEventListener("click", _ => this.declinePost());
+        declinePostButton!.addEventListener("click", () => this.declinePost());
         let deferPostButton = document.querySelector("#post-text-actions .defer");
-        deferPostButton!.addEventListener("click", _ => this.deferPost());
+        deferPostButton!.addEventListener("click", () => this.deferPost());
         let editPostTextButton = document.querySelector("#post-text-actions .edit");
-        editPostTextButton!.addEventListener("click", _ => this.editPostText());
+        editPostTextButton!.addEventListener("click", () => this.editPostText());
     }
 
     addAccount() {
@@ -60,21 +59,46 @@ export class Controller {
     }
     
     editCurrentAccount() {
-        // if(!this.accountList.currentAccount) return;
-        // let userInput = prompt("Bitte neuen Accountnamen eingeben");
-        // if(!userInput) return;
-        // this.accountList.currentAccount.setTitle(userInput);
-        // this.repaintAndSave();
+        let account = this.getCurrentAccount();
+        if(!account) return;
+        Dialog.editAccount(
+            account.title, 
+            account.postList.id, 
+            Array.from(account.filteredPosts).map(post => post.id).sort(), 
+            this.accountList.postLists,
+            (title, postListId, postIds) => {
+                account.title = title;
+                account.postList = this.accountList.getPostListById(postListId);
+                account.filteredPosts = new Set(postIds.map(postId => this.accountList.getPostById(postId)));
+                this.repaintAndSave();
+            }
+        );
     }
     
     removeCurrentAccount() {
-        // if(!this.accountList.currentAccount) return;
-        // if(!confirm("Wollen Sie den Account "+this.accountList.currentAccount.title+" wirklich löschen?")) return;
-        // this.accountList.removeAccount(this.accountList.currentAccount);
-        // this.accountList.currentAccount = null;
-        // this.setCurrentPost(null)
-        // this.repaintAndSave();
-    } 
+        let account = this.accountList.getCurrentAccount();
+        if(!account) return;
+        Dialog.confirm(`Willst du wirklich den Account ${account.title} löschen?`, () => { 
+            this.accountList.removeAccount(account);
+            this.accountList.setCurrentAccount(null);
+            this.repaintAndSave();
+        });
+    }
+
+    editPostLists() {
+        let postLists = this.accountList.postLists;
+        Dialog.editPostLists(
+            postLists, 
+            postLists.map(list => !!this.accountList.accounts.find(account => account.postList == list)), 
+            titles => {
+                for(let i=0; i<titles.length; i++) {
+                    let title = titles[i];
+                    if(i >= postLists.length) postLists.push(new PostList().init(title));
+                    else if(title == '') delete postLists[i];
+                }
+                this.accountList.postLists = postLists.filter(list => list);
+        });
+    }
 
     addPost() {
         Dialog.addPost((title, url) => {

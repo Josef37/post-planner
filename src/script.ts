@@ -15,7 +15,8 @@ let accountList = new AccountList([
     new PostingAccount().init("Josef", postList, new Set([postList.posts[0], postList.posts[1]])),
     new PostingAccount().init("Robin", postList, new Set([postList.posts[2], postList.posts[3]]))
 ], [
-    postList
+    postList,
+    new PostList().init("Brandneu!")
 ]);
 
 let controller = new Controller(accountList);
