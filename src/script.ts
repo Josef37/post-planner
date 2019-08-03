@@ -5,6 +5,7 @@ import { AccountList } from "./model/account-list";
 import { View } from "./view";
 import { Persistence } from "./persistence";
 import { Controller } from "./controller";
+import { Dialog } from "./dialog";
 
 let postList = new PostList().init("Post List 1");
 for (let i = 0; i < 10; i++) {
@@ -22,3 +23,7 @@ let accountList = new AccountList([
 
 let controller = new Controller(accountList);
 // controller.load();
+
+let dialog = new Dialog();
+dialog.createOverlay();
+setTimeout(_ => dialog.removeOverlay(), 700);
