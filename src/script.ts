@@ -23,6 +23,3 @@ let accountList = new AccountList([
 
 let controller = new Controller(accountList);
 // controller.load();
-
-let dialog = new Dialog();
-dialog.createOverlay();

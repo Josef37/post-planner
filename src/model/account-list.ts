@@ -1,5 +1,6 @@
 import { PostingAccount } from "./posting-account";
 import { PostList } from "./post-list";
+import { Post } from "./post";
 
 export class AccountList {
 
@@ -36,6 +37,11 @@ export class AccountList {
             throw "Post list is still in use";
         let index = this.postLists.indexOf(postList);
         if(index >= 0) this.postLists.splice(index, 1);
+    }
+
+    addPost(title: string, url: string) {
+        let post = new Post().init(title, url);
+        this.postLists.forEach(list => list.addPost(post));
     }
 
     getAccountById(accountId: number): PostingAccount {

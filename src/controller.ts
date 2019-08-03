@@ -3,6 +3,7 @@ import { PostingAccount } from "./model/posting-account";
 import { Post } from "./model/post";
 import { View } from "./view";
 import { Persistence } from "./persistence";
+import { Dialog } from "./dialog";
 
 export class Controller {
 
@@ -12,22 +13,29 @@ export class Controller {
         this.view = new View(this);
         this.repaintView();
 
-        let undoButton = document.querySelector("#global-actions .undo"); //TODO: implement
+        let undoButton = document.querySelector("#global-actions .undo"); 
         undoButton.addEventListener("click", _ => this.undo());
-        let redoButton = document.querySelector("#global-actions .redo"); //TODO: implement
+        let redoButton = document.querySelector("#global-actions .redo"); 
         redoButton.addEventListener("click", _ => this.redo());
-        let editPostListsButton = document.querySelector("#global-actions .edit"); //TODO: implement
+        //TODO: implement
+        // let editPostListsButton = document.querySelector("#global-actions .edit");
 
-        let editAccountButton = document.querySelector("#account-actions .edit"); //TODO: implement
+        //TODO: implement
+        let editAccountButton = document.querySelector("#account-actions .edit"); 
         editAccountButton!.addEventListener("click", _ => this.editCurrentAccount());
-        let addAccountButton = document.querySelector("#account-actions .add"); //TODO: implement
+        //TODO: implement
+        let addAccountButton = document.querySelector("#account-actions .add"); 
         addAccountButton!.addEventListener("click", _ => this.addAccount());
-        let removeAccountButton = document.querySelector("#account-actions .remove"); //TODO: implement
+        //TODO: implement
+        let removeAccountButton = document.querySelector("#account-actions .remove"); 
         removeAccountButton!.addEventListener("click", _ => this.removeCurrentAccount());
 
-        let addPostButton = document.querySelector("#post-actions .add"); //TODO: implement
-        let removePostButton = document.querySelector("#post-actions .remove"); //TODO: implement
-        let editPostButton = document.querySelector("#post-actions .edit"); //TODO: implement
+        let addPostButton = document.querySelector("#post-actions .add"); 
+        addPostButton!.addEventListener("click", _ => this.addPost());
+        //TODO: implement
+        let removePostButton = document.querySelector("#post-actions .remove"); 
+        //TODO: implement
+        let editPostButton = document.querySelector("#post-actions .edit");
 
         let acceptPostButton = document.querySelector("#post-text-actions .accept");
         acceptPostButton!.addEventListener("click", _ => this.acceptPost());
@@ -35,37 +43,45 @@ export class Controller {
         declinePostButton!.addEventListener("click", _ => this.declinePost());
         let deferPostButton = document.querySelector("#post-text-actions .defer");
         deferPostButton!.addEventListener("click", _ => this.deferPost());
-        let editPostTextButton = document.querySelector("#post-text-actions .edit"); //TODO: implement
+        let editPostTextButton = document.querySelector("#post-text-actions .edit");
+        editPostTextButton!.addEventListener("click", _ => this.editPostText());
     }
 
     addAccount() {
-        if(!this.accountList.currentAccount) return;
-        let userInput = prompt("Bitte Accountnamen eingeben");
-        if(!userInput) return;
-        //TODO change postList, remove "if(this.accountList.currentAccount)"
-        let newAccount = new PostingAccount().init(userInput, this.accountList.currentAccount.postList);
-        this.accountList.addAccount(newAccount);
-        this.accountList.currentAccount = newAccount;
-        this.setCurrentPost(this.accountList.currentAccount.getPostsFiltered()[0])
-        this.repaintAndSave();
+        // if(!this.accountList.currentAccount) return;
+        // let userInput = prompt("Bitte Accountnamen eingeben");
+        // if(!userInput) return;
+        // //TODO change postList, remove "if(this.accountList.currentAccount)"
+        // let newAccount = new PostingAccount().init(userInput, this.accountList.currentAccount.postList);
+        // this.accountList.addAccount(newAccount);
+        // this.accountList.currentAccount = newAccount;
+        // this.setCurrentPost(this.accountList.currentAccount.getPostsFiltered()[0])
+        // this.repaintAndSave();
     }
     
     editCurrentAccount() {
-        if(!this.accountList.currentAccount) return;
-        let userInput = prompt("Bitte neuen Accountnamen eingeben");
-        if(!userInput) return;
-        this.accountList.currentAccount.setTitle(userInput);
-        this.repaintAndSave();
+        // if(!this.accountList.currentAccount) return;
+        // let userInput = prompt("Bitte neuen Accountnamen eingeben");
+        // if(!userInput) return;
+        // this.accountList.currentAccount.setTitle(userInput);
+        // this.repaintAndSave();
     }
     
     removeCurrentAccount() {
-        if(!this.accountList.currentAccount) return;
-        if(!confirm("Wollen Sie den Account "+this.accountList.currentAccount.title+" wirklich löschen?")) return;
-        this.accountList.removeAccount(this.accountList.currentAccount);
-        this.accountList.currentAccount = null;
-        this.setCurrentPost(null)
-        this.repaintAndSave();
+        // if(!this.accountList.currentAccount) return;
+        // if(!confirm("Wollen Sie den Account "+this.accountList.currentAccount.title+" wirklich löschen?")) return;
+        // this.accountList.removeAccount(this.accountList.currentAccount);
+        // this.accountList.currentAccount = null;
+        // this.setCurrentPost(null)
+        // this.repaintAndSave();
     } 
+
+    addPost() {
+        Dialog.addPost((title, url) => {
+            this.accountList.addPost(title, url);
+            this.repaintAndSave();
+        })
+    }
     
     acceptPost() {
         if(!this.getCurrentPost() || !this.accountList.currentAccount) return;
@@ -84,6 +100,14 @@ export class Controller {
         if(!this.accountList.currentAccount || !this.getCurrentPost()) return;
         this.accountList.currentAccount.postList.deferPost(this.getCurrentPost()!);
         this.repaintAndSave();
+    }
+
+    editPostText() {
+        if(!this.getCurrentPost()) return;
+        Dialog.editPostText(this.getCurrentPost().text, newText => {
+            this.getCurrentPost().text = newText;
+            this.repaintAndSave();
+        });
     }
 
     getAccountById(accountId: number): PostingAccount {
@@ -131,10 +155,6 @@ export class Controller {
     repaintAndSave() {
         this.repaintView();
         this.save();
-    }
-    
-    getAccountList() { 
-        return this.accountList;
     }
 
     setAccountList(accountList: AccountList) { 

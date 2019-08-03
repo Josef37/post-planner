@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 html {
     height: 100%;
 }
@@ -7,10 +11,7 @@ body {
     min-height: 500px;
     width: 90%;
     max-width: 720px;
-    min-width: 300px;
-    /* display: flex;
-    flex-direction: column;
-    align-items: center; */
+    min-width: 350px;
     margin: 0 auto;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -20,7 +21,6 @@ body > section {
     flex: 1;
     display: flex;
     padding: 10px;
-    box-sizing: border-box;
 }
 
 body > section.double {
@@ -41,11 +41,8 @@ body > section.double {
 }
 
 .display textarea {
-    box-sizing: border-box;
     width: 100%;
     height: calc(100% - 5px);
-    font-family: inherit;
-    font-size: inherit;
     resize: none;
 }
 
@@ -57,7 +54,7 @@ section > .display {
 }
 
 section > .action {
-    width: 30px;
+    width: 40px;
     padding: 0 5px;
 }
 
@@ -88,20 +85,33 @@ section > .action {
 
 .dialog {
     background-color: white;
-    height: 300px;
-    width: 500px;
+    height: 400px;
+    width: 90%;
+    max-width: 720px;
+    min-width: 350px;
     margin: auto;
+    padding: 1em;
+    position: relative;
 }
 
-.button-row {
+.dialog .button-row {
+    position: absolute;
+    width: calc(100% - 2em);
+    bottom: 1em;
     text-align: right;
 }
 
-.button-row button + button {
-    margin-left: 10px;
+.dialog .button-row button {
+    padding: 0.5em 1em;
+    margin-left: 1em;
 }
 
-button {
+.dialog textarea {
+    width: 100%;
+    height: calc(100% - 5em);
+}
+
+button, textarea {
     font-family: inherit;
     font-size: inherit;
 }
