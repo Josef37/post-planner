@@ -7,7 +7,7 @@ import fs from 'fs';
 export class Persistence {
 
     static snapshotDir = './data/';
-    static maxSnapshots = Number.MAX_VALUE;
+    static maxSnapshots = 100;
     
     posts: Post[] = [];
     postsLists: PostList[] = [];
@@ -86,11 +86,14 @@ export class Persistence {
         let json = this.stringify();
         let dateString = new Date().toISOString().replace(/[.:]/g, '-');
         fs.writeFileSync(Persistence.snapshotDir + `snapshot-${dateString}.json`, json, 'utf-8');
+        // delete too many snapshots
         let snapshots = Persistence.getSnapshots();
         if(snapshots.length > Persistence.maxSnapshots) {
             let oldestSnapshot = snapshots[snapshots.length-1];
             fs.unlinkSync(oldestSnapshot);
         }
+        // delete all redo files
+        Persistence.getSnapshots('redo').forEach(redo => fs.unlinkSync(redo));
     }
 
     static load(): AccountList {
@@ -102,7 +105,16 @@ export class Persistence {
     static undo(): AccountList {
         let latestSnapshot = Persistence.getLatestSnapshot();
         let data = fs.readFileSync(latestSnapshot, 'utf-8');
-        fs.unlinkSync(latestSnapshot);
+        fs.renameSync(latestSnapshot, latestSnapshot.replace("snapshot", "redo"));
+        return Persistence.parse(data);
+    }
+
+    static redo(): AccountList {
+        let redos = Persistence.getSnapshots('redo');
+        if(redos.length == 0) throw "No redos found";
+        let oldestRedo = redos[redos.length-1]; // TODO: Clean Redo History when doing next step or get consecutive redo
+        let data = fs.readFileSync(oldestRedo, 'utf-8');
+        fs.renameSync(oldestRedo, oldestRedo.replace('redo', 'snapshot'));
         return Persistence.parse(data);
     }
 
@@ -112,9 +124,9 @@ export class Persistence {
         return snapshots[0];
     }
 
-    static getSnapshots(): string[] {
+    static getSnapshots(startsWith = 'snapshot'): string[] {
         let files = fs.readdirSync(Persistence.snapshotDir);
-        return files.filter(filename => filename.startsWith('snapshot') && filename.endsWith('.json'))
+        return files.filter(filename => filename.startsWith(startsWith) && filename.endsWith('.json'))
             .map(filename => Persistence.snapshotDir+filename).sort().reverse();
     }
 
