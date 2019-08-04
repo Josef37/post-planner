@@ -3,6 +3,17 @@ exports.__esModule = true;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const electron1 = require('electron');
 
+// https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
+function validURL(str) {
+    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return !!pattern.test(str);
+}
+
 function createWindow() {
     // Create the browser window.
     const win = new electron1.BrowserWindow({
@@ -15,7 +26,7 @@ function createWindow() {
 
     win.webContents.on('new-window', (e, url) => {
         e.preventDefault();
-        electron1.shell.openExternal(url);
+        validURL(url) && electron1.shell.openExternal(url);
     });
 
     win.setMenuBarVisibility(false)
