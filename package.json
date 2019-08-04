@@ -2,16 +2,15 @@
   "name": "post-planner",
   "version": "1.0.0",
   "description": "A simple planner for social media posts and practicing for uni",
-  "main": "bin/main.js",
-  "dependencies": {
-    "electron": "^6.0.0"
-  },
+  "main": "main.js",
+  "dependencies": {},
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.7",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
     "chai": "^4.2.0",
+    "electron": "^6.0.0",
     "electron-builder": "^21.1.5",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.2.0",
@@ -26,6 +25,12 @@
     "build": "tsc",
     "watch": "tsc -w",
     "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "post.planner",
+    "extraFiles": [
+      "data"
+    ]
   },
   "repository": {
     "type": "git",
