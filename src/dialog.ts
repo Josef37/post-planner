@@ -3,92 +3,92 @@ import { View } from "./view";
 
 export class Dialog {
     
-    static createOverlay(nodes: (string | Node)[], onconfirm?: () => any) {
-        let overlay = document.createElement("div");
+    private static createOverlay(nodes: (string | Node)[], onconfirm?: () => void): void {
+        const overlay = document.createElement("div");
         overlay.className = "overlay";
         document.body.appendChild(overlay);
 
-        let dialog = document.createElement("div");
+        const dialog = document.createElement("div");
         dialog.className = "dialog";
         overlay.appendChild(dialog);
 
         dialog.append(...nodes);
 
-        let buttonRow = document.createElement("div");
+        const buttonRow = document.createElement("div");
         buttonRow.className = "button-row";
         dialog.appendChild(buttonRow);
 
-        let cancel = document.createElement("button");
+        const cancel = document.createElement("button");
         cancel.innerText = "Abbrechen";
         cancel.type = "button";
-        cancel.addEventListener("click", () => document.body.removeChild(overlay));
+        cancel.addEventListener("click", (): void => { document.body.removeChild(overlay) });
         buttonRow.appendChild(cancel);
 
-        let confirm = document.createElement("button");
+        const confirm = document.createElement("button");
         confirm.innerText = "Übernehmen";
         confirm.type = "button";
-        confirm.addEventListener("click", () => document.body.removeChild(overlay));
+        confirm.addEventListener("click", (): void => { document.body.removeChild(overlay) });
         if(onconfirm) confirm.addEventListener("click", onconfirm);
         buttonRow.appendChild(confirm);
     }
 
-    static confirm(question: string, onconfirm: () => any) {
+    public static confirm(question: string, onconfirm: () => void): void {
         Dialog.createOverlay([question], onconfirm);
     }
 
-    static editPostText(postText: string, onconfirm: (newPostText: string) => void) {
-        let textarea = document.createElement("textarea");
+    public static editPostText(postText: string, onconfirm: (newPostText: string) => void): void {
+        const textarea = document.createElement("textarea");
         textarea.value = postText;
-        Dialog.createOverlay([textarea], () => onconfirm(textarea.value.trim()));
+        Dialog.createOverlay([textarea], (): void => onconfirm(textarea.value.trim()));
     }
 
-    static addPost(onconfirm: (title: string, url: string) => void) {
+    public static addPost(onconfirm: (title: string, url: string) => void): void {
         Dialog.editPost("", "", onconfirm);
     }
 
-    static createInputDiv(id: string, labelHTML: string, inputValue: string, inputType: string = "text"): [HTMLDivElement, HTMLInputElement] {
-        let label = document.createElement("label");
+    public static createInputDiv(id: string, labelHTML: string, inputValue: string, inputType: string = "text"): [HTMLDivElement, HTMLInputElement] {
+        const label = document.createElement("label");
         label.setAttribute("for", id);
         label.setAttribute("class", "text-input-label");
         label.innerHTML = labelHTML;
-        let input = document.createElement("input");
+        const input = document.createElement("input");
         input.id = id;
         input.value = inputValue;
         input.type = inputType;
-        let div = document.createElement("div");
+        const div = document.createElement("div");
         div.className = "container";
         div.append(label, input);
         return [div, input];
     }
 
-    static editPost(title: string, url: string, onconfirm: (title: string, url: string) => void) {
-        let [titleDiv, titleInput] = this.createInputDiv("title-input", "Post Titel", title);
-        let [urlDiv, urlInput] = this.createInputDiv("url-input", "Post URL", url, "url");
+    public static editPost(title: string, url: string, onconfirm: (title: string, url: string) => void): void {
+        const [titleDiv, titleInput] = this.createInputDiv("title-input", "Post Titel", title);
+        const [urlDiv, urlInput] = this.createInputDiv("url-input", "Post URL", url, "url");
 
-        Dialog.createOverlay([titleDiv, urlDiv], () => onconfirm(titleInput.value.trim(), urlInput.value.trim()));
+        Dialog.createOverlay([titleDiv, urlDiv], (): void => onconfirm(titleInput.value.trim(), urlInput.value.trim()));
     }
 
-    static addAccount(postLists: PostList[], onconfirm: (title: string, postListId: number, postIds: number[]) => void) {
+    public static addAccount(postLists: PostList[], onconfirm: (title: string, postListId: number, postIds: number[]) => void): void {
         Dialog.editAccount("", 0, [], postLists, onconfirm);
     }
 
-    static editAccount(
+    public static editAccount(
         title: string,
         postListId: number, 
         filteredPostIds: number[],
         postLists: PostList[],
-        onconfirm: (title: string, postListId: number, postIds: number[]) => void ) {
+        onconfirm: (title: string, postListId: number, postIds: number[]) => void ): void {
         
-        let leftCol = document.createElement("div");
+        const leftCol = document.createElement("div");
         leftCol.setAttribute("class", "column");
-        let rightCol = document.createElement("div");
+        const rightCol = document.createElement("div");
         rightCol.setAttribute("class", "column");
 
-        let [titleDiv, titleInput] = this.createInputDiv("title-input", "Account Titel", title);
+        const [titleDiv, titleInput] = this.createInputDiv("title-input", "Account Titel", title);
         leftCol.appendChild(titleDiv);
 
-        let postListsList = document.createElement("ul");
-        View.displayList(postListsList, postLists.map(postList => { 
+        const postListsList = document.createElement("ul");
+        View.displayList(postListsList, postLists.map((postList): {id: number; innerHTML: string} => { 
             return {
                 id: postList.id,
                 innerHTML: `<input type="radio"${postList.id == postListId ? ' checked' : ''} name="post-list" id="post-list-${postList.id}" value="${postList.id}">` + 
@@ -100,8 +100,8 @@ export class Dialog {
         let postList: HTMLUListElement;
         if(postLists.length > 0) {
             postList = document.createElement("ul");
-            let posts = postLists[0].posts.concat().sort((a, b) => a.id - b.id);
-            View.displayList(postList, posts.map(post => { 
+            const posts = postLists[0].posts.concat().sort((a, b): number => a.id - b.id);
+            View.displayList(postList, posts.map((post): {id: number; innerHTML: string} => { 
                 return {
                     id: post.id,
                     innerHTML: `<input type="checkbox"${filteredPostIds.includes(post.id) ? '' : ' checked'} name="post-${post.id}" id="post-${post.id}" value="${post.id}">` + 
@@ -112,27 +112,28 @@ export class Dialog {
             rightCol.appendChild(postList);
         }
 
-        Dialog.createOverlay([leftCol, rightCol], () => {
-            let title = titleInput.value;
-            let postListId = Number(Array.from(postListsList.children)
-                .map(child => child.getElementsByTagName("input")[0])
-                .find(input => input.checked)
-                .value);
-            let postIds = [];
+        Dialog.createOverlay([leftCol, rightCol], (): void => {
+            const title = titleInput.value;
+            const checkedInput = Array.from(postListsList.children)
+                .map((child): HTMLInputElement => child.getElementsByTagName("input")[0])
+                .find((input): boolean => input.checked);
+            if(checkedInput) postListId = Number(checkedInput.value);
+            let postIds: number[] = [];
             if(postList) postIds = Array.from(postList.children)
-                .map(child => child.getElementsByTagName("input")[0])
-                .filter(input => !input.checked)
-                .map(input => Number(input.value));
+                .map((child): HTMLInputElement => child.getElementsByTagName("input")[0])
+                .filter((input): boolean => !input.checked)
+                .map((input): number => Number(input.value));
             onconfirm(title.trim(), postListId, postIds);
         });
     }
 
-    static editPostLists(postLists: PostList[], inUse: boolean[], onconfirm: (titles: string[]) => void) {
-        let postListsList = document.createElement("ul");
+    public static editPostLists(postLists: PostList[], inUse: boolean[], onconfirm: (titles: string[]) => void): void {
+        const postListsList = document.createElement("ul");
         for(let i=0; i<postLists.length; i++) {
-            let list = postLists[i];
-            let listItem = document.createElement("li");
-            let [div, input] = [undefined, undefined];
+            const list = postLists[i];
+            const listItem = document.createElement("li");
+            let div: HTMLDivElement;
+            let input: HTMLInputElement;
             if( inUse[i] ) {
                 [div, input] = Dialog.createInputDiv(list.id.toString(), 'In Verwendung', list.title);
                 input.toggleAttribute("disabled");
@@ -142,16 +143,17 @@ export class Dialog {
             listItem.appendChild(div);
             postListsList.appendChild(listItem);
         }
-        let button = document.createElement("button");
+        const button = document.createElement("button");
         button.innerText = '+';
-        button.addEventListener("click", () => { 
-            let listItem = document.createElement("li");
-            let [div, input] = Dialog.createInputDiv("", 'Neue Post Liste', "");
+        button.addEventListener("click", (): void => { 
+            const listItem = document.createElement("li");
+            const [div] = Dialog.createInputDiv("", 'Neue Post Liste', "");
             listItem.appendChild(div);
             button.before(listItem);
         });
         postListsList.appendChild(button);
-        Dialog.createOverlay([postListsList], () => onconfirm(Array.from(postListsList.getElementsByTagName("input")).map(input => input.value.trim())));
+        Dialog.createOverlay([postListsList], (): void => 
+            onconfirm(Array.from(postListsList.getElementsByTagName("input")).map((input): string => input.value.trim())));
     }
 
 }

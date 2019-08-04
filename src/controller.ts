@@ -1,225 +1,233 @@
-import { AccountList } from "./model/account-list";
-import { PostingAccount } from "./model/posting-account";
-import { Post } from "./model/post";
-import { View } from "./view";
-import { Persistence } from "./persistence";
-import { Dialog } from "./dialog";
-import { PostList } from "./model/post-list";
+import { AccountList } from './model/account-list';
+import { PostingAccount } from './model/posting-account';
+import { Post } from './model/post';
+import { View } from './view';
+import { Persistence } from './persistence';
+import { Dialog } from './dialog';
+import { PostList } from './model/post-list';
 
 export class Controller {
-
-    view: View;
-
-    constructor(public accountList: AccountList) {
+    private view: View;
+    private accountList: AccountList;
+    
+    public constructor(accountList: AccountList) {
+        this.accountList = accountList;
         this.view = new View(this);
         this.repaintView();
 
-        let undoButton = document.querySelector("#global-actions .undo"); 
-        undoButton.addEventListener("click", () => this.undo());
-        let redoButton = document.querySelector("#global-actions .redo"); 
-        redoButton.addEventListener("click", () => this.redo());
-        let editPostListsButton = document.querySelector("#global-actions .edit");
-        editPostListsButton!.addEventListener("click", () => this.editPostLists());
+        const undoButton = document.querySelector('#global-actions .undo');
+        undoButton && undoButton.addEventListener('click', (): void => this.undo());
+        const redoButton = document.querySelector('#global-actions .redo');
+        redoButton && redoButton.addEventListener('click', (): void => this.redo());
+        const editPostListsButton = document.querySelector('#global-actions .edit');
+        editPostListsButton && editPostListsButton.addEventListener('click', (): void => this.editPostLists());
 
-        let editAccountButton = document.querySelector("#account-actions .edit"); 
-        editAccountButton!.addEventListener("click", () => this.editCurrentAccount());
-        let addAccountButton = document.querySelector("#account-actions .add"); 
-        addAccountButton!.addEventListener("click", () => this.addAccount());
-        let removeAccountButton = document.querySelector("#account-actions .remove"); 
-        removeAccountButton!.addEventListener("click", () => this.removeCurrentAccount());
+        const editAccountButton = document.querySelector('#account-actions .edit');
+        editAccountButton && editAccountButton.addEventListener('click', (): void => this.editCurrentAccount());
+        const addAccountButton = document.querySelector('#account-actions .add');
+        addAccountButton && addAccountButton.addEventListener('click', (): void => this.addAccount());
+        const removeAccountButton = document.querySelector('#account-actions .remove');
+        removeAccountButton && removeAccountButton.addEventListener('click', (): void => this.removeCurrentAccount());
 
-        let addPostButton = document.querySelector("#post-actions .add"); 
-        addPostButton!.addEventListener("click", () => this.addPost());
-        let removePostButton = document.querySelector("#post-actions .remove"); 
-        removePostButton!.addEventListener("click", () => this.filterPost());
-        let editPostButton = document.querySelector("#post-actions .edit");
-        editPostButton!.addEventListener("click", () => this.editPost());
+        const addPostButton = document.querySelector('#post-actions .add');
+        addPostButton && addPostButton.addEventListener('click', (): void => this.addPost());
+        const removePostButton = document.querySelector('#post-actions .remove');
+        removePostButton && removePostButton.addEventListener('click', (): void => this.filterPost());
+        const editPostButton = document.querySelector('#post-actions .edit');
+        editPostButton && editPostButton.addEventListener('click', (): void => this.editPost());
 
-        let acceptPostButton = document.querySelector("#post-text-actions .accept");
-        acceptPostButton!.addEventListener("click", () => this.acceptPost());
-        let declinePostButton = document.querySelector("#post-text-actions .decline");
-        declinePostButton!.addEventListener("click", () => this.declinePost());
-        let deferPostButton = document.querySelector("#post-text-actions .defer");
-        deferPostButton!.addEventListener("click", () => this.deferPost());
-        let editPostTextButton = document.querySelector("#post-text-actions .edit");
-        editPostTextButton!.addEventListener("click", () => this.editPostText());
+        const acceptPostButton = document.querySelector('#post-text-actions .accept');
+        acceptPostButton && acceptPostButton.addEventListener('click', (): void => this.acceptPost());
+        const declinePostButton = document.querySelector('#post-text-actions .decline');
+        declinePostButton && declinePostButton.addEventListener('click', (): void => this.declinePost());
+        const deferPostButton = document.querySelector('#post-text-actions .defer');
+        deferPostButton && deferPostButton.addEventListener('click', (): void => this.deferPost());
+        const editPostTextButton = document.querySelector('#post-text-actions .edit');
+        editPostTextButton && editPostTextButton.addEventListener('click', (): void => this.editPostText());
     }
 
-    addAccount() {
-        Dialog.addAccount(this.accountList.postLists, (title, postListId, postIds) => {
-            let newAccount = new PostingAccount().init(
-                title, 
+    private addAccount(): void {
+        Dialog.addAccount(this.accountList.postLists, (title, postListId, postIds): void => {
+            const newAccount = new PostingAccount().init(
+                title,
                 this.accountList.getPostListById(postListId),
-                new Set(postIds.map(postId => this.accountList.getPostById(postId)))
+                new Set(postIds
+                    .map((postId): (Post|undefined) => this.accountList.getPostById(postId))
+                    .filter((post): (Post|undefined) => post) as Post[]),
             );
             this.accountList.addAccount(newAccount);
             this.accountList.currentAccount = newAccount;
             this.repaintAndSave();
         });
     }
-    
-    editCurrentAccount() {
-        let account = this.getCurrentAccount();
-        if(!account) return;
+
+    private editCurrentAccount(): void {
+        const account = this.getCurrentAccount();
+        if (!account) return;
         Dialog.editAccount(
-            account.title, 
-            account.postList.id, 
-            Array.from(account.filteredPosts).map(post => post.id).sort(), 
+            account.title,
+            account.postList ? account.postList.id : 0,
+            Array.from(account.filteredPosts).map((post): number => post.id).sort(),
             this.accountList.postLists,
-            (title, postListId, postIds) => {
+            (title, postListId, postIds): void => {
                 account.title = title;
                 account.postList = this.accountList.getPostListById(postListId);
-                account.filteredPosts = new Set(postIds.map(postId => this.accountList.getPostById(postId)));
+                account.filteredPosts = new Set(postIds
+                    .map((postId): (Post|undefined) => this.accountList.getPostById(postId))
+                    .filter((post): (Post|undefined) => post) as Post[]);
                 this.repaintAndSave();
-            }
+            },
         );
     }
-    
-    removeCurrentAccount() {
-        let account = this.accountList.getCurrentAccount();
-        if(!account) return;
-        Dialog.confirm(`Willst du wirklich den Account ${account.title} löschen?`, () => { 
+
+    private removeCurrentAccount(): void {
+        const account = this.accountList.getCurrentAccount();
+        if (!account) return;
+        Dialog.confirm(`Willst du wirklich den Account ${account.title} löschen?`, (): void => {
             this.accountList.removeAccount(account);
-            this.accountList.setCurrentAccount(null);
+            this.accountList.setCurrentAccount(undefined);
             this.repaintAndSave();
         });
     }
 
-    editPostLists() {
-        let postLists = this.accountList.postLists;
+    private editPostLists(): void {
+        const { postLists } = this.accountList;
         Dialog.editPostLists(
-            postLists, 
-            postLists.map(list => !!this.accountList.accounts.find(account => account.postList == list)), 
-            titles => {
-                for(let i=0; i<titles.length; i++) {
-                    let title = titles[i];
-                    if(i >= postLists.length) postLists.push(new PostList().init(title));
-                    else if(title == '') delete postLists[i];
+            postLists,
+            postLists.map((list): boolean => !!this.accountList.accounts.find((account): boolean => account.postList == list)),
+            (titles): void => {
+                for (let i = 0; i < titles.length; i++) {
+                    const title = titles[i];
+                    if (i >= postLists.length) postLists.push(new PostList().init(title));
+                    else if (title == '') delete postLists[i];
                 }
-                this.accountList.postLists = postLists.filter(list => list);
-        });
+                this.accountList.postLists = postLists.filter((list): PostList => list);
+            },
+        );
     }
 
-    addPost() {
-        Dialog.addPost((title, url) => {
+    private addPost(): void {
+        Dialog.addPost((title, url): void => {
             this.accountList.addPost(title, url);
             this.repaintAndSave();
         });
     }
 
     // filters current post for current account
-    filterPost() {
-        if(!this.getCurrentAccount() || !this.getCurrentPost()) return;
-        this.getCurrentAccount().filterPost(this.getCurrentPost());
-        this.getCurrentAccount().setCurrentPost(null);
+    private filterPost(): void {
+        const [currentAccount, currentPost] = [this.getCurrentAccount(), this.getCurrentPost()];
+        if (!currentAccount || !currentPost) return;
+        currentAccount.filterPost(currentPost);
+        currentAccount.setCurrentPost(undefined);
         this.repaintAndSave();
     }
 
-    editPost() {
-        let post = this.getCurrentPost();
-        if(!post) return;
-        Dialog.editPost(post.title, post.url, (title, url) => {
+    private editPost(): void {
+        const post = this.getCurrentPost();
+        if (!post) return;
+        Dialog.editPost(post.title, post.url, (title, url): void => {
             post.title = title;
             post.url = url;
             this.repaintAndSave();
         });
     }
-    
-    acceptPost() {
-        if(!this.getCurrentPost() || !this.accountList.currentAccount) return;
-        this.accountList.currentAccount.postList.putPostLast(this.getCurrentPost()!);
-        navigator.clipboard.writeText(this.getCurrentPost()!.getTextForPosting());
-        this.repaintAndSave();
-    }
-    
-    declinePost() {
-        if(!this.accountList.currentAccount || !this.getCurrentPost()) return;
-        this.accountList.currentAccount.postList.putPostLast(this.getCurrentPost()!);
-        this.repaintAndSave();
-    }
-    
-    deferPost() {
-        if(!this.accountList.currentAccount || !this.getCurrentPost()) return;
-        this.accountList.currentAccount.postList.deferPost(this.getCurrentPost()!);
+
+    private acceptPost(): void {
+        const currentPost = this.getCurrentPost();
+        if (!currentPost || !this.accountList.currentAccount || !this.accountList.currentAccount.postList) return;
+        this.accountList.currentAccount.postList.putPostLast(currentPost);
+        navigator.clipboard.writeText(currentPost.getTextForPosting());
         this.repaintAndSave();
     }
 
-    editPostText() {
-        if(!this.getCurrentPost()) return;
-        Dialog.editPostText(this.getCurrentPost().text, newText => {
-            this.getCurrentPost().text = newText;
+    private declinePost(): void {
+        const currentPost = this.getCurrentPost();
+        if (!this.accountList.currentAccount || !currentPost || !this.accountList.currentAccount.postList) return;
+        this.accountList.currentAccount.postList.putPostLast(currentPost);
+        this.repaintAndSave();
+    }
+
+    private deferPost(): void {
+        const currentPost = this.getCurrentPost();
+        if (!this.accountList.currentAccount || !currentPost || !this.accountList.currentAccount.postList) return;
+        this.accountList.currentAccount.postList.deferPost(currentPost);
+        this.repaintAndSave();
+    }
+
+    private editPostText(): void {
+        const currentPost = this.getCurrentPost();
+        if (!currentPost) return;
+        Dialog.editPostText(currentPost.text, (newText): void => {
+            currentPost.text = newText;
             this.repaintAndSave();
         });
     }
 
-    getAccountById(accountId: number): PostingAccount {
+    public getAccountById(accountId: number): PostingAccount|undefined {
         return this.accountList.getAccountById(accountId);
     }
 
-    repaintView() {
+    private repaintView(): void {
         this.view.displayAccountList(this.accountList.accounts);
-        if(this.accountList.currentAccount) {
-            this.view.displayPostList(this.accountList.currentAccount.getPostsFiltered());
+        if (this.accountList.currentAccount) {
+            this.view.displayPostList(this.accountList.currentAccount.getPostsFiltered() || []);
         } else {
             this.view.displayPostList([]);
         }
-        if(this.getCurrentPost()) {
-            this.view.displayPostText(this.getCurrentPost()!);
+        const currentPost = this.getCurrentPost();
+        if (currentPost) {
+            this.view.displayPostText(currentPost);
         } else {
             this.view.clearPostText();
         }
     }
 
-    load() {
+    private load(): void {
         this.accountList = Persistence.load();
         this.repaintView();
     }
 
-    save() {
+    private save(): void {
         new Persistence(this.accountList).save();
     }
 
-    undo() {
+    private undo(): void {
         this.accountList = Persistence.undo();
         this.repaintView();
     }
 
-    redo() {
+    private redo(): void {
         this.accountList = Persistence.redo();
         this.repaintView();
     }
 
-    repaintAndSave() {
+    private repaintAndSave(): void {
         this.repaintView();
         this.save();
     }
 
-    setAccountList(accountList: AccountList) { 
-        this.accountList = accountList;
-        this.repaintAndSave();
+    public getCurrentAccount(): PostingAccount | undefined {
+        return this.accountList.currentAccount;
     }
-    
-    getCurrentAccount() { 
-        return this.accountList.currentAccount; 
-    }
-    
-    setCurrentAccount(account: PostingAccount | null) { 
+
+    public setCurrentAccount(account: PostingAccount | undefined): void {
         this.accountList.setCurrentAccount(account);
         this.repaintView();
     }
-    
-    getCurrentPost() { 
-        if(!this.accountList.getCurrentAccount()) return null;
-        return this.accountList.getCurrentAccount()!.getCurrentPost();
+
+    public getCurrentPost(): Post | undefined {
+        const currentAccount = this.accountList.getCurrentAccount();
+        if (currentAccount) return currentAccount.getCurrentPost();
     }
-    
-    setCurrentPost(post: Post | null) { 
-        if(!this.accountList.getCurrentAccount()) return;
-        this.accountList.getCurrentAccount()!.setCurrentPost(post);
+
+    public setCurrentPost(post: Post | undefined): void {
+        const currentAccount = this.accountList.getCurrentAccount();
+        if (!currentAccount) return;
+        currentAccount.setCurrentPost(post);
         this.repaintView();
     }
-    
-    getPostById(postId: number) {
+
+    public getPostById(postId: number): Post|undefined {
         return this.accountList.getPostById(postId);
     }
 }
