@@ -2,7 +2,9 @@
     box-sizing: border-box;
 }
 
-button, textarea, input {
+button,
+textarea,
+input {
     font-family: inherit;
     font-size: inherit;
 }
@@ -21,16 +23,16 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body > section {
-    height: 25%;
+body>section {
+    height: 20%;
     flex: 1;
     display: flex;
     padding: 10px;
 }
 
-body > section.double {
+body>section.double {
     flex: 2;
-    height: 50%;
+    height: 40%;
 }
 
 ul {
@@ -39,7 +41,7 @@ ul {
     list-style-type: none;
     cursor: pointer;
     width: fit-content;
-    min-width: 100%;
+    width: max-content;
 }
 
 ul li[selected] {
@@ -57,14 +59,14 @@ ul li[selected] a {
     resize: none;
 }
 
-section > .display {
+section>.display {
     flex: auto;
     width: calc(100% - 50px);
     margin-right: 10px;
     overflow: auto;
 }
 
-section > .action {
+section>.action {
     width: 40px;
     padding: 0 5px;
 }
@@ -83,7 +85,7 @@ section > .action {
     position: fixed;
     top: 0;
     left: 0;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     z-index: 1;
     overflow: auto;
 }
