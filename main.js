@@ -18,6 +18,7 @@ function createWindow() {
         electron1.shell.openExternal(url);
     });
 
+    win.setMenuBarVisibility(false)
     win.loadFile('index.html');
 }
 
