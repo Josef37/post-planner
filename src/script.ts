@@ -1,25 +1,31 @@
 import { PostList } from "./model/post-list";
 import { Post } from "./model/post";
-import { PostingAccount } from "./model/posting-account";
 import { AccountList } from "./model/account-list";
 import { Controller } from "./controller";
+import { readFileSync } from "fs";
+import { Persistence } from "./persistence";
 
-const postList = new PostList().init("Post List 1");
-for (let i = 0; i < 30; i++) {
-    postList.addPost(new Post().init("Post " + i, "https://www.google.com/search?q=" + i, "Post Text " + i));
+function loadPosts(path = './data/posts.json'): AccountList {
+    const { posts: parsed }: { posts: { title: string; url: string }[] } 
+        = JSON.parse(readFileSync(path, 'utf-8'));
+    const posts = parsed.map((parsedPost, index): Post => {
+        const newPost = new Post();
+        [newPost.id, newPost.title, newPost.url] = [index, parsedPost.title, parsedPost.url];
+        return newPost;
+    });
+    Post.runningId = posts.length;
+    
+    const postList = new PostList().init("Posts");
+    postList.posts = posts;
+    return new AccountList([], [postList]);
 }
-postList.addPost(new Post().init("0_1_2_3_4_5_6_7_8_9_10_11_12_13_14_15_16_17_18_19_20_0_1_2_3_4_5_6_7_8_9_10_11_12_13_14_15_16_17_18_19_20_0_1_2_3_4_5_6_7_8_9_10_11_12_13_14_15_16_17_18_19_20", "", "Ridiculosly long title"))
 
-const accountList = new AccountList([
-    new PostingAccount().init("Angi", postList),
-    new PostingAccount().init("Josef", postList, new Set([postList.posts[0], postList.posts[1]])),
-    new PostingAccount().init("Robin", postList, new Set([postList.posts[2], postList.posts[3]]))
-], [
-    postList,
-    new PostList().init("Brandneu!")
-]);
-
-new Controller(accountList);
-// controller.load();
-// TODO: What happens with 2 controllers? Everything is query-selected
-// new Controller(new AccountList([], []));
+try {
+    new Controller(Persistence.load());
+} catch(error) {
+    if(error == "No snapshot found") {
+        new Controller(loadPosts());
+    } else {
+        console.error(error);
+    }
+}
