@@ -1,22 +1,20 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
+Object.defineProperty(exports, '__esModule', {
+  value: true,
 });
 
-var electron_1 = require("electron");
+const electron1 = require('electron');
 
 function createWindow() {
   // Create the browser window.
-  var win = new electron_1.BrowserWindow({
+  const win = new electron1.BrowserWindow({
     width: 800,
     height: 700,
     webPreferences: {
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+    },
   }); // and load the index.html of the app.
 
-  win.webContents.on('new-window', function(e, url) {
+  win.webContents.on('new-window', (e, url) => {
     e.preventDefault();    
     require('electron').shell.openExternal(url);
   });
@@ -24,4 +22,4 @@ function createWindow() {
   win.loadFile('index.html');
 }
 
-electron_1.app.on('ready', createWindow);
+electron1.app.on('ready', createWindow);
