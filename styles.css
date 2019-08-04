@@ -40,8 +40,12 @@ ul {
     padding: 0;
     list-style-type: none;
     cursor: pointer;
-    width: fit-content;
+    min-width: 100%;
     width: max-content;
+}
+
+ul li:hover {
+    background-color: #94006c33;
 }
 
 ul li[selected] {

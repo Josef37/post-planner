@@ -131,7 +131,6 @@ export class Dialog {
         const postListsList = document.createElement("ul");
         for(let i=0; i<postLists.length; i++) {
             const list = postLists[i];
-            const listItem = document.createElement("li");
             let div: HTMLDivElement;
             let input: HTMLInputElement;
             if( inUse[i] ) {
@@ -140,16 +139,13 @@ export class Dialog {
             } else {
                 [div, input] = Dialog.createInputDiv(list.id.toString(), 'Neuer Titel für ' + list.title, list.title);
             }
-            listItem.appendChild(div);
-            postListsList.appendChild(listItem);
+            postListsList.appendChild(div);
         }
         const button = document.createElement("button");
         button.innerText = '+';
         button.addEventListener("click", (): void => { 
-            const listItem = document.createElement("li");
             const [div] = Dialog.createInputDiv("", 'Neue Post Liste', "");
-            listItem.appendChild(div);
-            button.before(listItem);
+            button.before(div);
         });
         postListsList.appendChild(button);
         Dialog.createOverlay([postListsList], (): void => 
