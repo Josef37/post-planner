@@ -1,6 +1,6 @@
-import { PostingAccount } from "./posting-account";
-import { PostList } from "./post-list";
-import { Post } from "./post";
+import { PostingAccount } from './posting-account';
+import { PostList } from './post-list';
+import { Post } from './post';
 
 export class AccountList {
 
@@ -50,7 +50,7 @@ export class AccountList {
      */
     public removePostList(postList: PostList): void {
         if(this.accounts.some((account): boolean => account.postList == postList))
-            throw new Error("Post list is still in use");
+            throw new Error('Post list is still in use');
         const index = this.postLists.indexOf(postList);
         if(index >= 0) this.postLists.splice(index, 1);
     }

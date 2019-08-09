@@ -16,7 +16,7 @@ export class Post {
      * @param text  The actual text you want to post
      * @param id    An id you may only provide when recreating posts
      */
-    public constructor(title: string, url: string, text: string = "", id?: number) {
+    public constructor(title: string, url: string, text: string = '', id?: number) {
         [this.title, this.url, this.text] = [title, url, text];
         this.id = id === undefined ? Post.runningId++ : id;
     }

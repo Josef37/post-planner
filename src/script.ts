@@ -1,9 +1,9 @@
-import { PostList } from "./model/post-list";
-import { Post } from "./model/post";
-import { AccountList } from "./model/account-list";
-import { Controller } from "./controller";
-import { readFileSync } from "fs";
-import { Persistence } from "./persistence";
+import { PostList } from './model/post-list';
+import { Post } from './model/post';
+import { AccountList } from './model/account-list';
+import { Controller } from './controller';
+import { readFileSync } from 'fs';
+import { Persistence } from './persistence';
 
 /**
  * Loads the default posts from a file and puts them into a post list.
@@ -18,7 +18,7 @@ function loadPosts(path = './data/posts.json'): AccountList {
     );
     Post.runningId = posts.length;
     
-    const postList = new PostList("Posts");
+    const postList = new PostList('Posts');
     postList.posts = posts;
     return new AccountList([], [postList]);
 }
@@ -30,7 +30,7 @@ function loadPosts(path = './data/posts.json'): AccountList {
 try {
     new Controller(Persistence.load());
 } catch(error) {
-    if(error instanceof Error && error.message == "No snapshot found") {
+    if(error instanceof Error && error.message == 'No snapshot found') {
         new Controller(loadPosts());
     } else {
         console.error(error);

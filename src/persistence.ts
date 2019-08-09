@@ -1,7 +1,7 @@
-import { AccountList } from "./model/account-list";
-import { PostList } from "./model/post-list";
-import { Post } from "./model/post";
-import { PostingAccount } from "./model/posting-account";
+import { AccountList } from './model/account-list';
+import { PostList } from './model/post-list';
+import { Post } from './model/post';
+import { PostingAccount } from './model/posting-account';
 import fs from 'fs';
 
 export class Persistence {
@@ -123,13 +123,13 @@ export class Persistence {
     public static undo(): AccountList {
         const latestSnapshot = Persistence.getLatestSnapshot();
         const data = fs.readFileSync(latestSnapshot, 'utf-8');
-        fs.renameSync(latestSnapshot, latestSnapshot.replace("snapshot", "redo"));
+        fs.renameSync(latestSnapshot, latestSnapshot.replace('snapshot', 'redo'));
         return Persistence.parse(data);
     }
 
     public static redo(): AccountList {
         const redos = Persistence.getSnapshots('redo');
-        if(redos.length == 0) throw new Error("No redos found");
+        if(redos.length == 0) throw new Error('No redos found');
         const oldestRedo = redos[redos.length-1]; // TODO: Clean Redo History when doing next step or get consecutive redo
         const data = fs.readFileSync(oldestRedo, 'utf-8');
         fs.renameSync(oldestRedo, oldestRedo.replace('redo', 'snapshot'));
@@ -138,7 +138,7 @@ export class Persistence {
 
     private static getLatestSnapshot(): string {
         const snapshots = Persistence.getSnapshots();
-        if(snapshots.length == 0) throw new Error("No snapshot found");
+        if(snapshots.length == 0) throw new Error('No snapshot found');
         return snapshots[0];
     }
 

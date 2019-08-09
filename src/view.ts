@@ -1,13 +1,13 @@
-import { Controller } from "./controller";
-import { PostingAccount } from "./model/posting-account";
-import { Post } from "./model/post";
+import { Controller } from './controller';
+import { PostingAccount } from './model/posting-account';
+import { Post } from './model/post';
 
 export class View {
 
     private controller: Controller;
-    private accountListElement = document.getElementById("account-list");
-    private postListElement = document.getElementById("post-list");
-    private postTextArea = document.getElementById("post-text");
+    private accountListElement = document.getElementById('account-list');
+    private postListElement = document.getElementById('post-list');
+    private postTextArea = document.getElementById('post-text');
 
     public constructor(controller: Controller) {
         this.controller = controller;
@@ -21,7 +21,7 @@ export class View {
         const currentAccount = this.controller.getCurrentAccount();
         if(currentAccount) {
             const currentAccountListItem = document.querySelector('#account-list li[data-id="'+currentAccount.id+'"]');
-            currentAccountListItem && currentAccountListItem.toggleAttribute("selected");
+            currentAccountListItem && currentAccountListItem.toggleAttribute('selected');
         }
     }
 
@@ -33,7 +33,7 @@ export class View {
         const currentPost = this.controller.getCurrentPost();
         if(currentPost) {
             const currentPostListItem = document.querySelector('#post-list li[data-id="' + currentPost.id + '"]');
-            currentPostListItem && currentPostListItem.toggleAttribute("selected");
+            currentPostListItem && currentPostListItem.toggleAttribute('selected');
         }
     }
 
@@ -51,33 +51,33 @@ export class View {
     }
 
     public displayPostText(post: Post): void {
-        if(!this.postTextArea) { console.log("No text area found."); return; }
+        if(!this.postTextArea) { console.log('No text area found.'); return; }
         this.postTextArea.innerHTML = post.getTextForPosting();
     }
 
     public clearPostText(): void {
-        if(!this.postTextArea) { console.log("No text area found."); return; }
-        this.postTextArea.innerHTML = "";
+        if(!this.postTextArea) { console.log('No text area found.'); return; }
+        this.postTextArea.innerHTML = '';
     }
 
     //TODO: Show Post List Elements with Link and title (for hovering)
     public static displayList(list: HTMLElement | null, elements: {id: number; innerHTML: string}[]): void {
-        if(!list) { console.log("No list given."); return; }
+        if(!list) { console.log('No list given.'); return; }
         Array.from(list.children).forEach((element): void => element.remove());
         for(const element of elements) {
-            const listItem = document.createElement("li");
+            const listItem = document.createElement('li');
             listItem.innerHTML = element.innerHTML;
-            listItem.setAttribute("data-id", String(element.id));
+            listItem.setAttribute('data-id', String(element.id));
             list.appendChild(listItem);
         }
     }
 
     private static makeListSelector(list: HTMLElement | null, callback: ((id: number) => void)): void {
         if(!list) return;
-        list.addEventListener("click", (event): void => {
+        list.addEventListener('click', (event): void => {
             Array.from(list.children)
                 .filter((listItem): boolean => listItem === event.target)
-                .forEach((listItem): void => callback(Number(listItem.getAttribute("data-id"))));
+                .forEach((listItem): void => callback(Number(listItem.getAttribute('data-id'))));
         });
     }
     
