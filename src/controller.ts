@@ -15,34 +15,34 @@ export class Controller {
         this.view = new View(this);
         this.repaintView();
 
-        const undoButton = document.querySelector('#global-actions .undo');
+        const undoButton = document.getElementById('undo-button');
         undoButton && undoButton.addEventListener('click', (): void => this.undo());
-        const redoButton = document.querySelector('#global-actions .redo');
+        const redoButton = document.getElementById('redo-button');
         redoButton && redoButton.addEventListener('click', (): void => this.redo());
-        const editPostListsButton = document.querySelector('#global-actions .edit');
+        
+        const editAccountButton = document.getElementById('edit-account-button');
+        editAccountButton && editAccountButton.addEventListener('click', (): void => this.editCurrentAccount());
+        const addAccountButton = document.getElementById('add-account-button');
+        addAccountButton && addAccountButton.addEventListener('click', (): void => this.addAccount());
+        const removeAccountButton = document.getElementById('remove-account-button');
+        removeAccountButton && removeAccountButton.addEventListener('click', (): void => this.removeCurrentAccount());
+        
+        const addPostButton = document.getElementById('add-post-button');
+        addPostButton && addPostButton.addEventListener('click', (): void => this.addPost());
+        const filterPostButton = document.getElementById('filter-post-button');
+        filterPostButton && filterPostButton.addEventListener('click', (): void => this.filterPost());
+        const editPostButton = document.getElementById('edit-post-button');
+        editPostButton && editPostButton.addEventListener('click', (): void => this.editPost());
+        const editPostListsButton = document.getElementById('edit-post-list-button');
         editPostListsButton && editPostListsButton.addEventListener('click', (): void => this.editPostLists());
 
-        const editAccountButton = document.querySelector('#account-actions .edit');
-        editAccountButton && editAccountButton.addEventListener('click', (): void => this.editCurrentAccount());
-        const addAccountButton = document.querySelector('#account-actions .add');
-        addAccountButton && addAccountButton.addEventListener('click', (): void => this.addAccount());
-        const removeAccountButton = document.querySelector('#account-actions .remove');
-        removeAccountButton && removeAccountButton.addEventListener('click', (): void => this.removeCurrentAccount());
-
-        const addPostButton = document.querySelector('#post-actions .add');
-        addPostButton && addPostButton.addEventListener('click', (): void => this.addPost());
-        const removePostButton = document.querySelector('#post-actions .remove');
-        removePostButton && removePostButton.addEventListener('click', (): void => this.filterPost());
-        const editPostButton = document.querySelector('#post-actions .edit');
-        editPostButton && editPostButton.addEventListener('click', (): void => this.editPost());
-
-        const acceptPostButton = document.querySelector('#post-text-actions .accept');
+        const acceptPostButton = document.getElementById('accept-post-button');
         acceptPostButton && acceptPostButton.addEventListener('click', (): void => this.acceptPost());
-        const declinePostButton = document.querySelector('#post-text-actions .decline');
+        const declinePostButton = document.getElementById('decline-post-button');
         declinePostButton && declinePostButton.addEventListener('click', (): void => this.declinePost());
-        const deferPostButton = document.querySelector('#post-text-actions .defer');
+        const deferPostButton = document.getElementById('defer-post-button');
         deferPostButton && deferPostButton.addEventListener('click', (): void => this.deferPost());
-        const editPostTextButton = document.querySelector('#post-text-actions .edit');
+        const editPostTextButton = document.getElementById('edit-post-text-button');
         editPostTextButton && editPostTextButton.addEventListener('click', (): void => this.editPostText());
     }
 

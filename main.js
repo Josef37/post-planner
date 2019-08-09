@@ -14,8 +14,8 @@ function validURL(str) {
     return !!pattern.test(str);
 }
 
+// Create the electron browser window.
 function createWindow() {
-    // Create the browser window.
     const win = new electron1.BrowserWindow({
         width: 800,
         height: 700,
@@ -29,7 +29,7 @@ function createWindow() {
         validURL(url) && electron1.shell.openExternal(url);
     });
 
-    win.setMenuBarVisibility(false)
+    win.setMenuBarVisibility(false);
     win.loadFile('index.html');
 }
 

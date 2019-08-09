@@ -13,14 +13,13 @@
       <ul id="account-list"></ul>
     </div>
     <div class="action" id="global-actions">
-      <button class="undo" title="Rückgängig">&#8630</button>
-      <button class="redo" title="Wiederherstellen">&#8631</button>
-      <button class="edit" title="Post Listen bearbeiten">&#9776;</button>
+      <button id="undo-button" title="Rückgängig">&#8630</button>
+      <button id="redo-button" title="Wiederherstellen">&#8631</button>
     </div>
     <div class="action" id="account-actions">
-      <button class="edit" title="Account bearbeiten">&#9998;</button>
-      <button class="add" title="Account hinzufügen">+</button>
-      <button class="remove" title="Account entfernen">-</button>
+      <button id="edit-account-button" title="Account bearbeiten">&#9998;</button>
+      <button id="add-account-button" title="Account hinzufügen">+</button>
+      <button id="remove-account-button" title="Account entfernen">-</button>
     </div>
   </section>
   <section id="posts-section" class="double">
@@ -28,9 +27,10 @@
       <ul id="post-list"></ul>
     </div>
     <div class="action" id="post-actions">
-      <button class="edit" title="Post umbenennen">&#9998;</button>
-      <button class="add" title="Post hinzufügen">+</button>
-      <button class="remove" title="Post für diesen Account ausschließen">-</button>
+      <button id="edit-post-button" title="Post umbenennen">&#9998;</button>
+      <button id="add-post-button" title="Post hinzufügen">+</button>
+      <button id="filter-post-button" title="Post für diesen Account ausschließen">-</button>
+      <button id="edit-post-list-button" title="Post Listen bearbeiten">&#9776;</button>
     </div>
   </section>
   <section id="post-text-section" class="double">
@@ -38,10 +38,10 @@
       <textarea readonly name="post-text" id="post-text" cols="30" rows="10"></textarea>
     </div>
     <div class="action" id="post-text-actions">
-      <button class="accept" title="Post annehmen und kopieren">&#10003;</button>
-      <button class="decline" title="Post ablehnen">&#10005;</button>
-      <button class="defer" title="Post aufschieben">&#129107;</button>
-      <button class="edit" title="Post Text bearbeiten">&#9998;</button>
+      <button id="accept-post-button" title="Post annehmen und kopieren">&#10003;</button>
+      <button id="decline-post-button" title="Post ablehnen">&#10005;</button>
+      <button id="defer-post-button" title="Post aufschieben">&#129107;</button>
+      <button id="edit-post-text-button" title="Post Text bearbeiten">&#9998;</button>
     </div>
   </section>
 </body>
