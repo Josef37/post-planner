@@ -1,30 +1,29 @@
 export class Post {
 
-    //TODO: Change to biggest id on startup
+    // This is used for creating post ids
     public static runningId: number = 0;
 
-    public id: number = -1;
-    public title: string = "";
-    public url: string = "";
-    public text: string = "";
+    public id: number;
+    public title: string;
+    public url: string;
+    public text: string;
 
-    public constructor() {}
 
-    public init(title: string, url: string, text = ""): Post {
-        this.id = Post.runningId++;
+    /**
+     * A Post represents one instance of a social media post.
+     * @param title The name of the post (not for posting)
+     * @param url   The URL that is added to the post text
+     * @param text  The actual text you want to post
+     * @param id    An id you may only provide when recreating posts
+     */
+    public constructor(title: string, url: string, text: string = "", id?: number) {
         [this.title, this.url, this.text] = [title, url, text];
-        return this;
+        this.id = id === undefined ? Post.runningId++ : id;
     }
 
-    public static fromJSON({id, title, url, text}: {id: number; title: string; url: string; text: string}): Post {
-        const post = new Post();
-        post.id = id;
-        post.title = title;
-        post.url = url;
-        post.text = text;
-        return post;
-    }
-
+    /**
+     * @returns the text that actually gets posted (includes the url at the end)
+     */
     public getTextForPosting(): string {
         return this.text + '\n\n' + this.url;
     }

@@ -46,7 +46,7 @@ export class AccountList {
     }
 
     public addPost(title: string, url: string): void {
-        const post = new Post().init(title, url);
+        const post = new Post(title, url);
         this.postLists.forEach((list): void => list.addPost(post));
     }
 

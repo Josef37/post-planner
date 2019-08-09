@@ -8,11 +8,9 @@ import { Persistence } from "./persistence";
 function loadPosts(path = './data/posts.json'): AccountList {
     const { posts: parsed }: { posts: { title: string; url: string }[] } 
         = JSON.parse(readFileSync(path, 'utf-8'));
-    const posts = parsed.map((parsedPost, index): Post => {
-        const newPost = new Post();
-        [newPost.id, newPost.title, newPost.url] = [index, parsedPost.title, parsedPost.url];
-        return newPost;
-    });
+    const posts = parsed.map((parsedPost, index): Post => 
+        new Post(parsedPost.title, parsedPost.url, undefined, index)
+    );
     Post.runningId = posts.length;
     
     const postList = new PostList().init("Posts");

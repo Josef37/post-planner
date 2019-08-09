@@ -61,7 +61,7 @@ export class Persistence {
 
         // revive posts (keep empty entries for mapping)
         const posts = parsedPosts.map((post): Post | undefined => {
-            if(post) return Post.fromJSON(post);
+            if(post) return new Post(post.title, post.url, post.text, post.id);
         });
 
         // revive postLists (keep empty entries for mapping)
