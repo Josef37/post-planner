@@ -69,13 +69,12 @@ export class Persistence {
         for(let i=0; i<parsedPostLists.length; i++) {
             const list = parsedPostLists[i];
             if(!list) continue;
-            postLists[i] = PostList.fromJSON({
-                id: list.id,
-                title: list.title,
-                posts: list.posts
-                    .map((postId): (Post|undefined) => posts[postId])
-                    .filter((post): (Post|undefined) => post) as Post[]
-            });
+            postLists[i] = new PostList(
+                list.title,
+                list.posts.map((postId): (Post|undefined) => posts[postId])
+                    .filter((post): (Post|undefined) => post) as Post[],
+                list.id
+            );
         }
 
         // revive accounts (remove empty entries)

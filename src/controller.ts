@@ -98,7 +98,7 @@ export class Controller {
             (titles): void => {
                 for (let i = 0; i < titles.length; i++) {
                     const title = titles[i];
-                    if (i >= postLists.length) postLists.push(new PostList().init(title));
+                    if (i >= postLists.length) postLists.push(new PostList(title));
                     else if (title == '') delete postLists[i];
                 }
                 this.accountList.postLists = postLists.filter((list): PostList => list);

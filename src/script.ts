@@ -13,7 +13,7 @@ function loadPosts(path = './data/posts.json'): AccountList {
     );
     Post.runningId = posts.length;
     
-    const postList = new PostList().init("Posts");
+    const postList = new PostList("Posts");
     postList.posts = posts;
     return new AccountList([], [postList]);
 }
