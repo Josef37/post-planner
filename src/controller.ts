@@ -62,7 +62,7 @@ export class Controller {
     }
 
     private editCurrentAccount(): void {
-        const account = this.getCurrentAccount();
+        const account = this.accountList.currentAccount;
         if (!account) return;
         Dialog.editAccount(
             account.title,
@@ -81,11 +81,11 @@ export class Controller {
     }
 
     private removeCurrentAccount(): void {
-        const account = this.accountList.getCurrentAccount();
+        const account = this.accountList.currentAccount;
         if (!account) return;
         Dialog.confirm(`Willst du wirklich den Account ${account.title} löschen?`, (): void => {
             this.accountList.removeAccount(account);
-            this.accountList.setCurrentAccount(undefined);
+            this.accountList.currentAccount = undefined;
             this.repaintAndSave();
         });
     }
@@ -108,14 +108,14 @@ export class Controller {
 
     private addPost(): void {
         Dialog.addPost((title, url): void => {
-            this.accountList.addPost(title, url);
+            this.accountList.addPost(new Post(title, url));
             this.repaintAndSave();
         });
     }
 
     // filters current post for current account
     private filterPost(): void {
-        const [currentAccount, currentPost] = [this.getCurrentAccount(), this.getCurrentPost()];
+        const [currentAccount, currentPost] = [this.accountList.currentAccount, this.getCurrentPost()];
         if (!currentAccount || !currentPost) return;
         currentAccount.filterPost(currentPost);
         currentAccount.currentPost = undefined;
@@ -211,17 +211,17 @@ export class Controller {
     }
 
     public setCurrentAccount(account: PostingAccount | undefined): void {
-        this.accountList.setCurrentAccount(account);
+        this.accountList.currentAccount = account;
         this.repaintView();
     }
 
     public getCurrentPost(): Post | undefined {
-        const currentAccount = this.accountList.getCurrentAccount();
+        const currentAccount = this.accountList.currentAccount;
         if (currentAccount) return currentAccount.currentPost;
     }
 
     public setCurrentPost(post: Post | undefined): void {
-        const currentAccount = this.accountList.getCurrentAccount();
+        const currentAccount = this.accountList.currentAccount;
         if (!currentAccount) return;
         currentAccount.currentPost = post;
         this.repaintView();

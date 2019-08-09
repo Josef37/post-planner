@@ -21,7 +21,7 @@ function loadPosts(path = './data/posts.json'): AccountList {
 try {
     new Controller(Persistence.load());
 } catch(error) {
-    if(error == "No snapshot found") {
+    if(error instanceof Error && error.message == "No snapshot found") {
         new Controller(loadPosts());
     } else {
         console.error(error);

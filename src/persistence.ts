@@ -129,7 +129,7 @@ export class Persistence {
 
     public static redo(): AccountList {
         const redos = Persistence.getSnapshots('redo');
-        if(redos.length == 0) throw "No redos found";
+        if(redos.length == 0) throw new Error("No redos found");
         const oldestRedo = redos[redos.length-1]; // TODO: Clean Redo History when doing next step or get consecutive redo
         const data = fs.readFileSync(oldestRedo, 'utf-8');
         fs.renameSync(oldestRedo, oldestRedo.replace('redo', 'snapshot'));
@@ -138,7 +138,7 @@ export class Persistence {
 
     private static getLatestSnapshot(): string {
         const snapshots = Persistence.getSnapshots();
-        if(snapshots.length == 0) throw "No snapshot found";
+        if(snapshots.length == 0) throw new Error("No snapshot found");
         return snapshots[0];
     }
 

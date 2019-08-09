@@ -8,56 +8,78 @@ export class AccountList {
     public accounts: PostingAccount[];
     public postLists: PostList[];
     
+    /**
+     * AccountList lists all accounts and post lists, it is the central point of the model
+     * @param accounts All PostingAccounts
+     * @param postLists All PostLists
+     */
     public constructor(accounts: PostingAccount[], postLists: PostList[]) {
         this.accounts = accounts;
         this.postLists = postLists;
     }
 
+    /**
+     * Adds an account to the list
+     * @param account the account to be added
+     */
     public addAccount(account: PostingAccount): void {
         this.accounts.push(account);
     }
 
+    /**
+     * Removes an account from the list, if it is found
+     * @param account the account to be removed
+     */
     public removeAccount(account: PostingAccount): void {
         const index = this.accounts.indexOf(account);
         if(index >= 0) this.accounts.splice(index, 1);
     }
 
-    public getAccounts(): PostingAccount[] { 
-        return this.accounts;
-    }
-
-    public getCurrentAccount(): PostingAccount|undefined { 
-        return this.currentAccount; 
-    }
-    
-    public setCurrentAccount(account: PostingAccount | undefined): void { 
-        this.currentAccount = account;
-    }
-
+    /**
+     * Adds a post list to the list
+     * @param postList the post list to be added
+     */
     public addPostList(postList: PostList): void {
         this.postLists.push(postList);
     }
 
+    /**
+     * Removes a post list if it is unused
+     * @param postList the post list to be removed
+     * @throws an error if the post list is still in use
+     */
     public removePostList(postList: PostList): void {
         if(this.accounts.some((account): boolean => account.postList == postList))
-            throw "Post list is still in use";
+            throw new Error("Post list is still in use");
         const index = this.postLists.indexOf(postList);
         if(index >= 0) this.postLists.splice(index, 1);
     }
 
-    public addPost(title: string, url: string): void {
-        const post = new Post(title, url);
+    /**
+     * Adds a post to all post lists
+     * @param post the post to be added
+     */
+    public addPost(post: Post): void {
         this.postLists.forEach((list): void => list.addPost(post));
     }
 
-    public getAccountById(accountId: number): PostingAccount|undefined {
+    /**
+     * Gets the account with the given id, if it is found
+     */
+    public getAccountById(accountId: number): PostingAccount | undefined {
         return this.accounts.find((account): boolean => account.id === accountId);
     }
 
+    /**
+     * Gets the post list with the given id, if it is found
+     */
     public getPostListById(postListId: number): PostList|undefined {
         return this.postLists.find((list): boolean => list.id === postListId);
     }
     
+    /**
+     * Gets the post with the given id, if it is found
+     */
     public getPostById(postId: number): Post|undefined   {
         let post: Post|undefined;
         for(const list of this.postLists) {
