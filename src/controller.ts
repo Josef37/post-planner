@@ -48,7 +48,7 @@ export class Controller {
 
     private addAccount(): void {
         Dialog.addAccount(this.accountList.postLists, (title, postListId, postIds): void => {
-            const newAccount = new PostingAccount().init(
+            const newAccount = new PostingAccount(
                 title,
                 this.accountList.getPostListById(postListId),
                 new Set(postIds
@@ -118,7 +118,7 @@ export class Controller {
         const [currentAccount, currentPost] = [this.getCurrentAccount(), this.getCurrentPost()];
         if (!currentAccount || !currentPost) return;
         currentAccount.filterPost(currentPost);
-        currentAccount.setCurrentPost(undefined);
+        currentAccount.currentPost = undefined;
         this.repaintAndSave();
     }
 
@@ -217,13 +217,13 @@ export class Controller {
 
     public getCurrentPost(): Post | undefined {
         const currentAccount = this.accountList.getCurrentAccount();
-        if (currentAccount) return currentAccount.getCurrentPost();
+        if (currentAccount) return currentAccount.currentPost;
     }
 
     public setCurrentPost(post: Post | undefined): void {
         const currentAccount = this.accountList.getCurrentAccount();
         if (!currentAccount) return;
-        currentAccount.setCurrentPost(post);
+        currentAccount.currentPost = post;
         this.repaintView();
     }
 

@@ -82,14 +82,14 @@ export class Persistence {
         for (let i = 0; i < parsedAccounts.length; i++) {
             const account = parsedAccounts[i];
             if(!account) continue;
-            accounts.push(PostingAccount.fromJSON({
-                id: account.id,
-                title: account.title,
-                postList: postLists[account.postList],
-                filteredPosts: account.filteredPosts
+            accounts.push(new PostingAccount(
+                account.title,
+                postLists[account.postList],
+                new Set(account.filteredPosts
                     .map((postId): (Post|undefined) => posts[postId])
-                    .filter((post): (Post|undefined) => post) as Post[]
-            }));
+                    .filter((post): (Post|undefined) => post) as Post[]),
+                account.id
+            ));
         }
 
         // get maximum ids for consistent numbering
