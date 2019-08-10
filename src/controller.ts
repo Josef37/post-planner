@@ -117,7 +117,7 @@ export class Controller {
      * Empty names indicate deleting the list.
      */
     private editPostLists(): void {
-        const { postLists } = this.accountList;
+        const postLists = this.accountList.postLists;
         Dialog.editPostLists(
             postLists,
             postLists.map((list): boolean => !!this.accountList.accounts.find((account): boolean => account.postList == list)),
@@ -125,7 +125,7 @@ export class Controller {
                 for (let i = 0; i < titles.length; i++) {
                     const title = titles[i];
                     if (i >= postLists.length) {
-                        postLists.push(new PostList(title));
+                        postLists.push(new PostList(title, postLists.length > 0 ? postLists[0].posts : undefined)); //TODO: Dont just copy
                     } else if (title == '') {
                         delete postLists[i];
                     }
