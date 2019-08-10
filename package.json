@@ -24,7 +24,8 @@
     "test": "mocha -r ts-node/register test/**/*.spec.ts",
     "build": "tsc",
     "watch": "tsc -w",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "build_and_start": "tsc && electron ./main.js"
   },
   "build": {
     "appId": "post.planner",
