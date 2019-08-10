@@ -64,8 +64,8 @@ export class Controller {
      * Set title, post list and filtered posts.
      */
     private addAccount(): void {
-        Dialog.addAccount(this.accountList.postLists, (title, postListId, postIds): boolean => {
-            if(title == "") return false;
+        Dialog.addAccount(this.accountList.postLists, (title, postListId, postIds): string | void => {
+            if(title == "") return 'Der Titel darf nicht leer sein.';
             const newAccount = new PostingAccount(
                 title,
                 this.accountList.getPostListById(postListId),
@@ -76,7 +76,6 @@ export class Controller {
             this.accountList.addAccount(newAccount);
             this.accountList.currentAccount = newAccount;
             this.repaintAndSave();
-            return true;
         });
     }
 
@@ -92,15 +91,14 @@ export class Controller {
             account.postList ? account.postList.id : 0,
             Array.from(account.filteredPosts).map((post): number => post.id).sort(),
             this.accountList.postLists,
-            (title, postListId, postIds): boolean => {
-                if(title == "") return false;
+            (title, postListId, postIds): string | void => {
+                if(title == "") return 'Der Titel darf nicht leer sein.';
                 account.title = title;
                 account.postList = this.accountList.getPostListById(postListId);
                 account.filteredPosts = new Set(postIds
                     .map((postId): (Post | null) => this.accountList.getPostById(postId))
                     .filter((post): (Post | null) => post) as Post[]);
                 this.repaintAndSave();
-                return true;
             },
         );
     }
@@ -111,11 +109,10 @@ export class Controller {
     private removeCurrentAccount(): void {
         const account = this.accountList.currentAccount;
         if (!account) return;
-        Dialog.confirm(`Willst du wirklich den Account ${account.title} löschen?`, (): boolean => {
+        Dialog.confirm(`Willst du wirklich den Account ${account.title} löschen?`, (): string | void => {
             this.accountList.removeAccount(account);
             this.accountList.currentAccount = null;
             this.repaintAndSave();
-            return true;
         });
     }
 
@@ -128,17 +125,16 @@ export class Controller {
         Dialog.editPostLists(
             postLists,
             postLists.map((list): boolean => !!this.accountList.accounts.find((account): boolean => account.postList == list)),
-            (titles): boolean => {
+            (titles): string | void => {
                 for (let i = 0; i < titles.length; i++) {
                     const title = titles[i];
                     if (i >= postLists.length) {
-                        postLists.push(new PostList(title, postLists.length > 0 ? postLists[0].posts : undefined)); //TODO: Dont just copy
+                        title && postLists.push(new PostList(title, postLists.length > 0 ? postLists[0].posts : undefined)); //TODO: Dont just copy
                     } else if (title == '') {
                         delete postLists[i];
                     }
                 }
                 this.accountList.postLists = postLists.filter((list): PostList => list);
-                return true;
             },
         );
     }
@@ -147,11 +143,11 @@ export class Controller {
      * Add a post to all post lists.
      */
     private addPost(): void {
-        Dialog.addPost((title, url): boolean => {
-            if(title == "" || !Utils.isvalidURL(url)) return false;
+        Dialog.addPost((title, url): string | void => {
+            if(title == "") return 'Der Titel darf nicht leer sein.';
+            if(!Utils.isvalidURL(url)) return 'Die URL ist nicht gültig.';
             this.accountList.addPost(new Post(title, url));
             this.repaintAndSave();
-            return true;
         });
     }
 
@@ -171,11 +167,11 @@ export class Controller {
      */
     private removeCurrentPost(): void {
         const currentPost = this.getCurrentPost();
-        currentPost && Dialog.confirm(`Willst du wirklich den Post ${currentPost.title} überall löschen?`, (): boolean => {
-            this.accountList.removePost(currentPost);
-            this.repaintAndSave();
-            return true;
-        });
+        currentPost && Dialog.confirm(`Willst du wirklich den Post ${currentPost.title} überall löschen?`, 
+            (): string | void => {
+                this.accountList.removePost(currentPost);
+                this.repaintAndSave();
+            });
     }
 
     /**
@@ -184,12 +180,12 @@ export class Controller {
     private editPost(): void {
         const post = this.getCurrentPost();
         if (!post) return;
-        Dialog.editPost(post.title, post.url, (title, url): boolean => {
-            if(title == "" || !Utils.isvalidURL(url)) return false;
+        Dialog.editPost(post.title, post.url, (title, url): string | void => {
+            if(title == "") return 'Der Titel darf nicht leer sein.';
+            if(!Utils.isvalidURL(url)) return 'Die URL ist nicht gültig.';
             post.title = title;
             post.url = url;
             this.repaintAndSave();
-            return true;
         });
     }
 
@@ -231,10 +227,9 @@ export class Controller {
     private editPostText(): void {
         const currentPost = this.getCurrentPost();
         if (!currentPost) return;
-        Dialog.editPostText(currentPost.text, (newText): boolean => {
+        Dialog.editPostText(currentPost.text, (newText): string | void => {
             currentPost.text = newText;
             this.repaintAndSave();
-            return true;
         });
     }
 

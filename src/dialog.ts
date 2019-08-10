@@ -6,9 +6,9 @@ export class Dialog {
     /**
      * Creates a dialog on top of the document with a cancel and confirm button. Only closes on valid inputs.
      * @param nodes the html elements to be shown inside the dialog
-     * @param onconfirm the action to perform on user confirmation, indicating input validity
+     * @param onconfirm the action to perform on user confirmation, returning an error message on invalid inputs
      */
-    private static createDialog(nodes: (string | Node)[], onconfirm: () => boolean): void {
+    private static createDialog(nodes: (string | Node)[], onconfirm: () => string | void): void {
         const overlay = document.createElement('div');
         overlay.className = 'overlay';
         document.body.appendChild(overlay);
@@ -32,12 +32,10 @@ export class Dialog {
         const confirm = document.createElement('button');
         confirm.innerText = 'Übernehmen';
         confirm.type = 'button';
-        confirm.addEventListener('click', (): void => { 
-            if(onconfirm()){
-                document.body.removeChild(overlay)
-            } else {
-                Dialog.showErrorMessage('Ungültige Eingaben');
-            } 
+        confirm.addEventListener('click', (): void => {
+            const message = onconfirm();
+            if(message) Dialog.showErrorMessage(message);
+            else document.body.removeChild(overlay);
         });
         buttonRow.appendChild(confirm);
     }
@@ -61,7 +59,7 @@ export class Dialog {
      * @param question the question of the dialog
      * @param onconfirm the action to perform on user confirmation
      */
-    public static confirm(question: string, onconfirm: () => boolean): void {
+    public static confirm(question: string, onconfirm: () => string | void): void {
         Dialog.createDialog([question], onconfirm);
     }
 
@@ -70,10 +68,10 @@ export class Dialog {
      * @param postText the current post text
      * @param onconfirm the action to perform with the new post text on user confirmation
      */
-    public static editPostText(postText: string, onconfirm: (newPostText: string) => boolean): void {
+    public static editPostText(postText: string, onconfirm: (newPostText: string) => string | void): void {
         const textarea = document.createElement('textarea');
         textarea.value = postText;
-        Dialog.createDialog([textarea], (): boolean => onconfirm(textarea.value.trim()));
+        Dialog.createDialog([textarea], (): string | void => onconfirm(textarea.value.trim()));
     }
     
     /**
@@ -102,7 +100,7 @@ export class Dialog {
      * Shows two input fields for post title and url
      * @param onconfirm the action to perform with the new post information on user confirmation
      */
-    public static addPost(onconfirm: (title: string, url: string) => boolean): void {
+    public static addPost(onconfirm: (title: string, url: string) => string | void): void {
         Dialog.editPost('', '', onconfirm);
     }
     
@@ -112,11 +110,11 @@ export class Dialog {
      * @param url The current url of the post
      * @param onconfirm the action to perform with the new post information on user confirmation
      */
-    public static editPost(title: string, url: string, onconfirm: (title: string, url: string) => boolean): void {
+    public static editPost(title: string, url: string, onconfirm: (title: string, url: string) => string | void): void {
         const [titleDiv, titleInput] = this.createInputDiv('title-input', 'Post Titel', title);
         const [urlDiv, urlInput] = this.createInputDiv('url-input', 'Post URL', url, 'url');
 
-        Dialog.createDialog([titleDiv, urlDiv], (): boolean => onconfirm(titleInput.value.trim(), urlInput.value.trim()));
+        Dialog.createDialog([titleDiv, urlDiv], (): string | void => onconfirm(titleInput.value.trim(), urlInput.value.trim()));
     }
 
     /**
@@ -124,7 +122,10 @@ export class Dialog {
      * @param postLists the post lists for selection
      * @param onconfirm the action to perform with the new account information on user confirmation
      */
-    public static addAccount(postLists: PostList[], onconfirm: (title: string, postListId: number, postIds: number[]) => boolean): void {
+    public static addAccount(
+        postLists: PostList[],
+        onconfirm: (title: string, postListId: number, postIds: number[]) => string | void): void {
+
         Dialog.editAccount('', 0, [], postLists, onconfirm);
     }
 
@@ -141,7 +142,7 @@ export class Dialog {
         postListId: number, 
         filteredPostIds: number[],
         postLists: PostList[],
-        onconfirm: (title: string, postListId: number, postIds: number[]) => boolean ): void {
+        onconfirm: (title: string, postListId: number, postIds: number[]) => string | void ): void {
         
         const leftCol = document.createElement('div');
         leftCol.setAttribute('class', 'column');
@@ -180,7 +181,7 @@ export class Dialog {
         }
 
         // Get all inputted values and call the callback
-        Dialog.createDialog([leftCol, rightCol], (): boolean => {
+        Dialog.createDialog([leftCol, rightCol], (): string | void => {
             const title = titleInput.value;
             const checkedInput = Array.from(postListsList.children)
                 .map((child): HTMLInputElement => child.getElementsByTagName('input')[0])
@@ -201,7 +202,11 @@ export class Dialog {
      * @param inUse indicates that a post list is in use
      * @param onconfirm the action to perform with the new post lists information on user confirmation
      */
-    public static editPostLists(postLists: PostList[], inUse: boolean[], onconfirm: (titles: string[]) => boolean): void {
+    public static editPostLists(
+        postLists: PostList[], 
+        inUse: boolean[], 
+        onconfirm: (titles: string[]) => string | void): void {
+
         const postListsList = document.createElement('ul');
         for(let i=0; i<postLists.length; i++) {
             const list = postLists[i];
@@ -222,7 +227,7 @@ export class Dialog {
             button.before(div);
         });
         postListsList.appendChild(button);
-        Dialog.createDialog([postListsList], (): boolean => 
+        Dialog.createDialog([postListsList], (): string | void => 
             onconfirm(Array.from(postListsList.getElementsByTagName('input')).map((input): string => input.value.trim())));
     }
 
