@@ -146,3 +146,15 @@ section>.action {
     vertical-align: top;
     max-height: calc(100% - 5em);
 }
+
+.error-message-popup {
+    position: fixed;
+    top: 30px;
+    right: 50px;
+    width: 200px;
+    background-color: #e1cc9f;
+    z-index: 2;
+    border-radius: 5px;
+    padding: 10px;
+    font-style: italic;
+}

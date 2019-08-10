@@ -4,6 +4,7 @@ import { AccountList } from './model/account-list';
 import { Controller } from './controller';
 import { readFileSync } from 'fs';
 import { Persistence } from './persistence';
+import { Dialog } from './dialog';
 
 /**
  * Loads the default posts from a file and puts them into a post list.
@@ -23,6 +24,11 @@ function loadPosts(path = './data/posts.json'): AccountList {
     return new AccountList([], [postList]);
 }
 
+// Show all unhandled errors as error popup
+window.addEventListener('error', (error): void => {
+    Dialog.showErrorMessage(error.message);
+})
+
 /*
  * Create a controller from the latest snapshot.
  * If no snapshot is found, load the default posts.
@@ -32,7 +38,5 @@ try {
 } catch(error) {
     if(error instanceof Error && error.message == 'No snapshot found') {
         new Controller(loadPosts());
-    } else {
-        console.error(error);
     }
 }

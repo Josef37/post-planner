@@ -33,12 +33,28 @@ export class Dialog {
         confirm.innerText = 'Übernehmen';
         confirm.type = 'button';
         confirm.addEventListener('click', (): void => { 
-            if(onconfirm())
-                document.body.removeChild(overlay) 
+            if(onconfirm()){
+                document.body.removeChild(overlay)
+            } else {
+                Dialog.showErrorMessage('Ungültige Eingaben');
+            } 
         });
         buttonRow.appendChild(confirm);
     }
 
+    /**
+     * Shows an error message popup, which will be removed after timeout or when clicked
+     * @param message the message to be displayed
+     * @param timeout the time in milliseconds after which the message is closed
+     */
+    public static showErrorMessage(message: string, timeout: number = 5000): void {
+        const div = document.createElement('div');
+        div.setAttribute('class', 'error-message-popup');
+        div.innerText = message;
+        setTimeout((): void => { document.body.removeChild(div) }, timeout);
+        div.addEventListener('click', (): void => { document.body.removeChild(div) });
+        document.body.appendChild(div);
+    }
 
     /**
      * Creates a simple yes/no dialog

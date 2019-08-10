@@ -1,8 +1,7 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 exports.__esModule = true;
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const electron1 = require('electron');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const Utils = require('./bin/utils');
 
 // Create the electron browser window.
