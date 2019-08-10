@@ -64,6 +64,18 @@ export class AccountList {
     }
 
     /**
+     * Removes a post from all post lists, filters and as current post
+     * @param post the post to be removed
+     */
+    public removePost(post: Post): void {
+        this.postLists.forEach((list): boolean => list.removePost(post));
+        this.accounts.forEach((account): void => {
+            if(account.currentPost == post) account.currentPost = null;
+            account.unfilterPost(post);
+        });
+    }
+
+    /**
      * Gets the account with the given id, if it is found
      */
     public getAccountById(accountId: number): PostingAccount | null {

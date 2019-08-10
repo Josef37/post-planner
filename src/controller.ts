@@ -33,12 +33,14 @@ export class Controller {
         const removeAccountButton = document.getElementById('remove-account-button');
         removeAccountButton && removeAccountButton.addEventListener('click', (): void => this.removeCurrentAccount());
         
+        const editPostButton = document.getElementById('edit-post-button');
+        editPostButton && editPostButton.addEventListener('click', (): void => this.editPost());
         const addPostButton = document.getElementById('add-post-button');
         addPostButton && addPostButton.addEventListener('click', (): void => this.addPost());
         const filterPostButton = document.getElementById('filter-post-button');
         filterPostButton && filterPostButton.addEventListener('click', (): void => this.filterPost());
-        const editPostButton = document.getElementById('edit-post-button');
-        editPostButton && editPostButton.addEventListener('click', (): void => this.editPost());
+        const removePostButton = document.getElementById('remove-post-button');
+        removePostButton && removePostButton.addEventListener('click', (): void => this.removeCurrentPost());
         const editPostListsButton = document.getElementById('edit-post-list-button');
         editPostListsButton && editPostListsButton.addEventListener('click', (): void => this.editPostLists());
 
@@ -157,6 +159,18 @@ export class Controller {
         currentAccount.filterPost(currentPost);
         currentAccount.currentPost = null;
         this.repaintAndSave();
+    }
+
+    /**
+     * Removes current post from all post lists
+     */
+    private removeCurrentPost(): void {
+        const currentPost = this.getCurrentPost();
+        currentPost && Dialog.confirm(`Willst du wirklich den Post ${currentPost.title} überall löschen?`, (): boolean => {
+            this.accountList.removePost(currentPost);
+            this.repaintAndSave();
+            return true;
+        });
     }
 
     /**

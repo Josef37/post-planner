@@ -33,6 +33,15 @@ export class PostingAccount {
     }
 
     /**
+     * Removes a post from filtering (so it can be posted again)
+     * @param post the post to remove from the filter
+     * @returns if the operation was successful
+     */
+    public unfilterPost(post: Post): boolean {
+        return this.filteredPosts.delete(post);
+    }
+
+    /**
      * Get all posts for posting (sorted), if there is a post list associated
      * @returns the posts which can be posted
      */
