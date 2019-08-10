@@ -21,11 +21,11 @@ export class PostList {
     }
 
     /**
-     * Adds a post to the end of the list
+     * Adds a post to the start of the list
      * @param post The post to add
      */
     public addPost(post: Post): void {
-        this.posts.push(post);
+        this.posts.unshift(post);
     }
 
     /**
