@@ -15,7 +15,7 @@ html {
 
 body {
     height: 100%;
-    min-height: 500px;
+    min-height: 600px;
     width: 90%;
     max-width: 720px;
     min-width: 350px;
@@ -71,12 +71,13 @@ section>.display {
 }
 
 section>.action {
-    width: 40px;
+    width: 50px;
     padding: 0 5px;
 }
 
-.action button {
-    width: 30px;
+.action button,
+.action input {
+    width: 40px;
     height: 30px;
     font-size: 18px;
     margin-bottom: 5px;

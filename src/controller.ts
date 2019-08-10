@@ -49,7 +49,12 @@ export class Controller {
         const declinePostButton = document.getElementById('decline-post-button');
         declinePostButton && declinePostButton.addEventListener('click', (): void => this.declinePost());
         const deferPostButton = document.getElementById('defer-post-button');
-        deferPostButton && deferPostButton.addEventListener('click', (): void => this.deferPost());
+        const deferPostInput = document.getElementById('defer-post-positions-input');
+        deferPostButton && deferPostButton.addEventListener('click', (): void => {
+            let positions;
+            if(deferPostInput instanceof HTMLInputElement) positions = Number(deferPostInput.value);
+            this.deferPost(positions);
+        });
         const editPostTextButton = document.getElementById('edit-post-text-button');
         editPostTextButton && editPostTextButton.addEventListener('click', (): void => this.editPostText());
     }
@@ -213,10 +218,10 @@ export class Controller {
     /**
      * Moves the post down a few positions within the current post list
      */
-    private deferPost(): void {
+    private deferPost(positions?: number): void {
         const currentPost = this.getCurrentPost();
         if (!this.accountList.currentAccount || !currentPost || !this.accountList.currentAccount.postList) return;
-        this.accountList.currentAccount.postList.deferPost(currentPost);
+        this.accountList.currentAccount.postList.deferPost(currentPost, positions);
         this.repaintAndSave();
     }
 
