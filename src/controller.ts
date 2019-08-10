@@ -10,6 +10,11 @@ export class Controller {
     private view: View;
     private accountList: AccountList;
     
+    /**
+     * Creates a controller that mediates between view and model.
+     * Instanciates the view and registers all buttons.
+     * @param accountList the data model
+     */
     public constructor(accountList: AccountList) {
         this.accountList = accountList;
         this.view = new View(this);
@@ -46,6 +51,10 @@ export class Controller {
         editPostTextButton && editPostTextButton.addEventListener('click', (): void => this.editPostText());
     }
 
+    /**
+     * Add an account through a dialog.
+     * Set title, post list and filtered posts.
+     */
     private addAccount(): void {
         Dialog.addAccount(this.accountList.postLists, (title, postListId, postIds): void => {
             const newAccount = new PostingAccount(
@@ -61,6 +70,10 @@ export class Controller {
         });
     }
 
+    /**
+     * Edit the current account trough a dialog.
+     * Edit title, post list and filtered posts
+     */
     private editCurrentAccount(): void {
         const account = this.accountList.currentAccount;
         if (!account) return;
@@ -80,6 +93,9 @@ export class Controller {
         );
     }
 
+    /**
+     * Removes the current account with dialog confirmation.
+     */
     private removeCurrentAccount(): void {
         const account = this.accountList.currentAccount;
         if (!account) return;
@@ -90,6 +106,10 @@ export class Controller {
         });
     }
 
+    /**
+     * Edit post lists by renaming.
+     * Empty names indicate deleting the list.
+     */
     private editPostLists(): void {
         const { postLists } = this.accountList;
         Dialog.editPostLists(
@@ -106,6 +126,9 @@ export class Controller {
         );
     }
 
+    /**
+     * Add a post to all post lists.
+     */
     private addPost(): void {
         Dialog.addPost((title, url): void => {
             this.accountList.addPost(new Post(title, url));
@@ -113,7 +136,9 @@ export class Controller {
         });
     }
 
-    // filters current post for current account
+    /**
+     * Filters current post for current account
+     */
     private filterPost(): void {
         const [currentAccount, currentPost] = [this.accountList.currentAccount, this.getCurrentPost()];
         if (!currentAccount || !currentPost) return;
@@ -122,6 +147,9 @@ export class Controller {
         this.repaintAndSave();
     }
 
+    /**
+     * Edits the posts title and url by a dialog
+     */
     private editPost(): void {
         const post = this.getCurrentPost();
         if (!post) return;
@@ -132,14 +160,21 @@ export class Controller {
         });
     }
 
+    /**
+     * Copies the posting text to the clipboard and moves the post to the end within the current post list.
+     */
     private acceptPost(): void {
         const currentPost = this.getCurrentPost();
-        if (!currentPost || !this.accountList.currentAccount || !this.accountList.currentAccount.postList) return;
-        this.accountList.currentAccount.postList.putPostLast(currentPost);
+        const currentAccount = this.accountList.currentAccount;
+        if (!currentPost || !currentAccount || !currentAccount.postList) return;
+        currentAccount.postList.putPostLast(currentPost);
         navigator.clipboard.writeText(currentPost.getTextForPosting());
         this.repaintAndSave();
     }
 
+    /**
+     * Moves the current post to the end of the current post list.
+     */
     private declinePost(): void {
         const currentPost = this.getCurrentPost();
         if (!this.accountList.currentAccount || !currentPost || !this.accountList.currentAccount.postList) return;
@@ -147,6 +182,9 @@ export class Controller {
         this.repaintAndSave();
     }
 
+    /**
+     * Moves the post down a few positions within the current post list
+     */
     private deferPost(): void {
         const currentPost = this.getCurrentPost();
         if (!this.accountList.currentAccount || !currentPost || !this.accountList.currentAccount.postList) return;
@@ -154,6 +192,9 @@ export class Controller {
         this.repaintAndSave();
     }
 
+    /**
+     * Creates a dialog to edit the posts text (not the url)
+     */
     private editPostText(): void {
         const currentPost = this.getCurrentPost();
         if (!currentPost) return;
@@ -163,10 +204,16 @@ export class Controller {
         });
     }
 
+    /**
+     * Get an account by its id
+     */
     public getAccountById(accountId: number): PostingAccount | null {
         return this.accountList.getAccountById(accountId);
     }
 
+    /**
+     * Repaints the view depending on selected elements.
+     */
     private repaintView(): void {
         this.view.displayAccountList(this.accountList.accounts);
         if (this.accountList.currentAccount) {
@@ -182,44 +229,73 @@ export class Controller {
         }
     }
 
+    /**
+     * Load the latest state from a file
+     */
     private load(): void {
         this.accountList = Persistence.load();
         this.repaintView();
     }
 
+    /**
+     * Save the current state in a file.
+     */
     private save(): void {
         new Persistence(this.accountList).save();
     }
 
+    /**
+     * Undo the last change. 
+     * Only possible for saved actions.
+     */
     private undo(): void {
         this.accountList = Persistence.undo();
         this.repaintView();
     }
 
+    /**
+     * Redo the last undo. Only possible if there was no change between the undo/redo actions.
+     * Only possible for saved actions.
+     */
     private redo(): void {
         this.accountList = Persistence.redo();
         this.repaintView();
     }
 
+    /**
+     * Repaints the view and saves the model in a file
+     */
     private repaintAndSave(): void {
         this.repaintView();
         this.save();
     }
 
+    /**
+     * Get the currently selected account
+     */
     public getCurrentAccount(): PostingAccount | null {
         return this.accountList.currentAccount;
     }
 
+    /**
+     * Sets the account as currently selected
+     */
     public setCurrentAccount(account: PostingAccount | null): void {
         this.accountList.currentAccount = account;
         this.repaintView();
     }
 
+    /**
+     * Gets the current post, if an account and post are selected
+     */
     public getCurrentPost(): Post | null {
         const currentAccount = this.accountList.currentAccount;
         return currentAccount && currentAccount.currentPost;
     }
 
+    /**
+     * Sets the current post for the current account, if there is one
+     */
     public setCurrentPost(post: Post | null): void {
         const currentAccount = this.accountList.currentAccount;
         if (!currentAccount) return;
@@ -227,6 +303,9 @@ export class Controller {
         this.repaintView();
     }
 
+    /**
+     * Gets the post with the given id, if it is found
+     */
     public getPostById(postId: number): Post | null {
         return this.accountList.getPostById(postId);
     }
