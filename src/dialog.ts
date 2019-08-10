@@ -99,22 +99,53 @@ export class Dialog {
     /**
      * Shows two input fields for post title and url
      * @param onconfirm the action to perform with the new post information on user confirmation
+     * @param accounts a list of all account ids, titles and if they filter the post (here false)
      */
-    public static addPost(onconfirm: (title: string, url: string) => string | void): void {
-        Dialog.editPost('', '', onconfirm);
+    public static addPost(accounts: {id: number; title: string; filtered: boolean}[], 
+        onconfirm: (title: string, url: string, filteringAccounts: {id: number; filtered: boolean}[]) => string | void): void {
+
+        Dialog.editPost('', '', accounts, onconfirm);
     }
     
     /**
      * Shows two input fields for post title and url to edit
      * @param title The current title of the post
      * @param url The current url of the post
+     * @param accounts a list of all account titles and if they filter the post
      * @param onconfirm the action to perform with the new post information on user confirmation
      */
-    public static editPost(title: string, url: string, onconfirm: (title: string, url: string) => string | void): void {
+    public static editPost(title: string, url: string, accounts: {id: number; title: string; filtered: boolean}[],
+        onconfirm: (title: string, url: string, filteringAccounts: {id: number; filtered: boolean}[]) => string | void): void {
+
+        const leftCol = document.createElement('div');
+        leftCol.setAttribute('class', 'column');
+        const rightCol = document.createElement('div');
+        rightCol.setAttribute('class', 'column');
+
         const [titleDiv, titleInput] = this.createInputDiv('title-input', 'Post Titel', title);
         const [urlDiv, urlInput] = this.createInputDiv('url-input', 'Post URL', url, 'url');
+        leftCol.append(titleDiv, urlDiv);
 
-        Dialog.createDialog([titleDiv, urlDiv], (): string | void => onconfirm(titleInput.value.trim(), urlInput.value.trim()));
+        // checkbox list of filtering accounts
+        rightCol.innerText = 'Anzeigende Accounts';
+        const accountList = document.createElement('ul');
+        View.displayList(accountList, accounts.map((account): {id: number; innerHTML: string} => { 
+            return {
+                id: account.id,
+                innerHTML: `<input type="checkbox"${account.filtered ? '' : ' checked'} name="account-${account.id}" id="account-${account.id}" value="${account.id}">` + 
+                    `<label for="account-${account.id}">${account.title}</label>`
+            };
+        }));
+        rightCol.appendChild(accountList);
+
+        Dialog.createDialog([leftCol, rightCol], (): string | void => 
+            onconfirm(
+                titleInput.value.trim(), 
+                urlInput.value.trim(), 
+                Array.from(accountList.children)
+                    .map((child): HTMLInputElement => child.getElementsByTagName('input')[0])
+                    .map((input): {id: number; filtered: boolean} => ({id: Number(input.value), filtered: !input.checked}))
+            ));
     }
 
     /**

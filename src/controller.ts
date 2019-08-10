@@ -140,13 +140,45 @@ export class Controller {
     }
 
     /**
-     * Add a post to all post lists.
+     * Edits the posts title and url by a dialog. Select the accounts that filter it.
      */
-    private addPost(): void {
-        Dialog.addPost((title, url): string | void => {
+    private editPost(): void {
+        const post = this.getCurrentPost();
+        if (!post) return;
+        const accounts = this.accountList.accounts.map((account): { id: number; title: string; filtered: boolean } => {
+            return {id: account.id, title: account.title, filtered: account.filteredPosts.has(post)}
+        });
+        Dialog.editPost(post.title, post.url, accounts, (title, url, filteringAccounts): string | void => {
             if(title == "") return 'Der Titel darf nicht leer sein.';
             if(!Utils.isvalidURL(url)) return 'Die URL ist nicht gültig.';
-            this.accountList.addPost(new Post(title, url));
+            post.title = title;
+            post.url = url;
+            filteringAccounts.forEach((value): void => {
+                const account = this.getAccountById(value.id);
+                if(value.filtered) account && account.filterPost(post);
+                else account && account.unfilterPost(post);
+            });
+            this.repaintAndSave();
+        });
+    }
+
+    /**
+     * Add a post to all post lists. Select the accounts that filter it.
+     */
+    private addPost(): void {
+        const accounts = this.accountList.accounts.map((account): { id: number; title: string; filtered: boolean } => {
+            return {id: account.id, title: account.title, filtered: false}
+        });
+        Dialog.addPost(accounts, (title, url, filteringAccounts): string | void => {
+            if(title == "") return 'Der Titel darf nicht leer sein.';
+            if(!Utils.isvalidURL(url)) return 'Die URL ist nicht gültig.';
+            const post = new Post(title, url);
+            this.accountList.addPost(post);
+            filteringAccounts.forEach((value): void => {
+                const account = this.getAccountById(value.id);
+                if(value.filtered) account && account.filterPost(post);
+                else account && account.unfilterPost(post);
+            });
             this.repaintAndSave();
         });
     }
@@ -172,21 +204,6 @@ export class Controller {
                 this.accountList.removePost(currentPost);
                 this.repaintAndSave();
             });
-    }
-
-    /**
-     * Edits the posts title and url by a dialog
-     */
-    private editPost(): void {
-        const post = this.getCurrentPost();
-        if (!post) return;
-        Dialog.editPost(post.title, post.url, (title, url): string | void => {
-            if(title == "") return 'Der Titel darf nicht leer sein.';
-            if(!Utils.isvalidURL(url)) return 'Die URL ist nicht gültig.';
-            post.title = title;
-            post.url = url;
-            this.repaintAndSave();
-        });
     }
 
     /**
