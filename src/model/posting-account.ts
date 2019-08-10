@@ -7,9 +7,9 @@ export class PostingAccount {
     public static runningId: number = 0;
 
     public id: number;
-    public currentPost: Post | undefined;
+    public currentPost: Post | null = null;
     public title: string;
-    public postList: PostList|undefined;
+    public postList: PostList | null;
     public filteredPosts: Set<Post>;
 
     /**
@@ -19,7 +19,7 @@ export class PostingAccount {
      * @param filteredPosts The posts which the account excludes for posting
      * @param id An id you may only provide when recreating the account
      */
-    public constructor(title: string, postList: PostList|undefined, filteredPosts: Set<Post> = new Set(), id?: number) {
+    public constructor(title: string, postList: PostList | null, filteredPosts: Set<Post> = new Set(), id?: number) {
         [this.title, this.postList, this.filteredPosts] = [title, postList, filteredPosts];
         this.id = id === undefined ? PostingAccount.runningId++ : id;
     }
@@ -36,9 +36,8 @@ export class PostingAccount {
      * Get all posts for posting (sorted), if there is a post list associated
      * @returns the posts which can be posted
      */
-    public getPostsFiltered(): Post[] | undefined {
-        if(this.postList) 
-            return this.postList.posts.filter((post): boolean => !this.filteredPosts.has(post));
+    public getPostsFiltered(): Post[] | null {
+        return this.postList && this.postList.posts.filter((post): boolean => !this.filteredPosts.has(post));
     }
 
 }

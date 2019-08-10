@@ -71,7 +71,7 @@ export class PostList {
      * @param postId the id of the post to find
      * @returns      the post with the id or undefined, if it wasn't found
      */
-    public getPostById(postId: number): Post|undefined {
+    public getPostById(postId: number): Post | undefined {
         return this.posts.find((post): boolean => post.id === postId);
     }
 

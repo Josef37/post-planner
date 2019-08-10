@@ -4,7 +4,7 @@ import { Post } from './post';
 
 export class AccountList {
 
-    public currentAccount: PostingAccount | undefined;
+    public currentAccount: PostingAccount | null = null;
     public accounts: PostingAccount[];
     public postLists: PostList[];
     
@@ -66,26 +66,26 @@ export class AccountList {
     /**
      * Gets the account with the given id, if it is found
      */
-    public getAccountById(accountId: number): PostingAccount | undefined {
-        return this.accounts.find((account): boolean => account.id === accountId);
+    public getAccountById(accountId: number): PostingAccount | null {
+        return this.accounts.find((account): boolean => account.id === accountId) || null;
     }
 
     /**
      * Gets the post list with the given id, if it is found
      */
-    public getPostListById(postListId: number): PostList|undefined {
-        return this.postLists.find((list): boolean => list.id === postListId);
+    public getPostListById(postListId: number): PostList | null {
+        return this.postLists.find((list): boolean => list.id === postListId) || null;
     }
     
     /**
      * Gets the post with the given id, if it is found
      */
-    public getPostById(postId: number): Post|undefined   {
-        let post: Post|undefined;
+    public getPostById(postId: number): Post | null   {
+        let post: Post | undefined;
         for(const list of this.postLists) {
             post = list.getPostById(postId);
             if(post) break;
         }
-        return post;
+        return post || null;
     }
 }

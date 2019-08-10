@@ -52,8 +52,8 @@ export class Controller {
                 title,
                 this.accountList.getPostListById(postListId),
                 new Set(postIds
-                    .map((postId): (Post|undefined) => this.accountList.getPostById(postId))
-                    .filter((post): (Post|undefined) => post) as Post[]),
+                    .map((postId): (Post | null) => this.accountList.getPostById(postId))
+                    .filter((post): (Post | null) => post) as Post[]),
             );
             this.accountList.addAccount(newAccount);
             this.accountList.currentAccount = newAccount;
@@ -73,8 +73,8 @@ export class Controller {
                 account.title = title;
                 account.postList = this.accountList.getPostListById(postListId);
                 account.filteredPosts = new Set(postIds
-                    .map((postId): (Post|undefined) => this.accountList.getPostById(postId))
-                    .filter((post): (Post|undefined) => post) as Post[]);
+                    .map((postId): (Post | null) => this.accountList.getPostById(postId))
+                    .filter((post): (Post | null) => post) as Post[]);
                 this.repaintAndSave();
             },
         );
@@ -85,7 +85,7 @@ export class Controller {
         if (!account) return;
         Dialog.confirm(`Willst du wirklich den Account ${account.title} löschen?`, (): void => {
             this.accountList.removeAccount(account);
-            this.accountList.currentAccount = undefined;
+            this.accountList.currentAccount = null;
             this.repaintAndSave();
         });
     }
@@ -118,7 +118,7 @@ export class Controller {
         const [currentAccount, currentPost] = [this.accountList.currentAccount, this.getCurrentPost()];
         if (!currentAccount || !currentPost) return;
         currentAccount.filterPost(currentPost);
-        currentAccount.currentPost = undefined;
+        currentAccount.currentPost = null;
         this.repaintAndSave();
     }
 
@@ -163,7 +163,7 @@ export class Controller {
         });
     }
 
-    public getAccountById(accountId: number): PostingAccount|undefined {
+    public getAccountById(accountId: number): PostingAccount | null {
         return this.accountList.getAccountById(accountId);
     }
 
@@ -206,28 +206,28 @@ export class Controller {
         this.save();
     }
 
-    public getCurrentAccount(): PostingAccount | undefined {
+    public getCurrentAccount(): PostingAccount | null {
         return this.accountList.currentAccount;
     }
 
-    public setCurrentAccount(account: PostingAccount | undefined): void {
+    public setCurrentAccount(account: PostingAccount | null): void {
         this.accountList.currentAccount = account;
         this.repaintView();
     }
 
-    public getCurrentPost(): Post | undefined {
+    public getCurrentPost(): Post | null {
         const currentAccount = this.accountList.currentAccount;
-        if (currentAccount) return currentAccount.currentPost;
+        return currentAccount && currentAccount.currentPost;
     }
 
-    public setCurrentPost(post: Post | undefined): void {
+    public setCurrentPost(post: Post | null): void {
         const currentAccount = this.accountList.currentAccount;
         if (!currentAccount) return;
         currentAccount.currentPost = post;
         this.repaintView();
     }
 
-    public getPostById(postId: number): Post|undefined {
+    public getPostById(postId: number): Post | null {
         return this.accountList.getPostById(postId);
     }
 }
