@@ -150,7 +150,7 @@ export class Controller {
         });
         Dialog.editPost(post.title, post.url, accounts, (title, url, filteringAccounts): string | void => {
             if(title == "") return 'Der Titel darf nicht leer sein.';
-            if(!Utils.isvalidURL(url)) return 'Die URL ist nicht gültig.';
+            if(!Utils.isValidURL(url)) return 'Die URL ist nicht gültig.';
             post.title = title;
             post.url = url;
             filteringAccounts.forEach((value): void => {
@@ -171,7 +171,7 @@ export class Controller {
         });
         Dialog.addPost(accounts, (title, url, filteringAccounts): string | void => {
             if(title == "") return 'Der Titel darf nicht leer sein.';
-            if(!Utils.isvalidURL(url)) return 'Die URL ist nicht gültig.';
+            if(!Utils.isValidURL(url)) return 'Die URL ist nicht gültig.';
             const post = new Post(title, url);
             this.accountList.addPost(post);
             filteringAccounts.forEach((value): void => {

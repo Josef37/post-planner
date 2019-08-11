@@ -2,7 +2,7 @@
 exports.__esModule = true;
 
 const electron1 = require('electron');
-const Utils = require('./bin/utils');
+const Utils = require('./bin/utils').Utils;
 
 // Create the electron browser window.
 function createWindow() {
@@ -16,7 +16,7 @@ function createWindow() {
 
     win.webContents.on('new-window', (e, url) => {
         e.preventDefault();
-        Utils.validURL(url) && electron1.shell.openExternal(url);
+        Utils.isValidURL(url) && electron1.shell.openExternal(url);
     });
 
     win.setMenuBarVisibility(false);
