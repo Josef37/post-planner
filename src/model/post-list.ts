@@ -47,7 +47,7 @@ export class PostList {
      */
     public putPostLast(post: Post): boolean {
         if(this.removePost(post)) { 
-            this.addPost(post);
+            this.posts.push(post);
             return true;
         }
         return false;
