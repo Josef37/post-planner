@@ -75,4 +75,11 @@ export class PostList {
         return this.posts.find((post): boolean => post.id === postId);
     }
 
+    /**
+     * Copies a post list with a new title
+     */
+    public copy(title: string): PostList {
+        return new PostList(title, Array.from(this.posts));
+    }
+
 }

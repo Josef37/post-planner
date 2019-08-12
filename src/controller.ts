@@ -129,7 +129,7 @@ export class Controller {
                 for (let i = 0; i < titles.length; i++) {
                     const title = titles[i];
                     if (i >= postLists.length) {
-                        title && postLists.push(new PostList(title, postLists.length > 0 ? postLists[0].posts : undefined)); //TODO: Dont just copy
+                        title && postLists.push(postLists.length > 0 ? postLists[0].copy(title) : new PostList(title)); //TODO: Dont just copy
                     } else if (title == '') {
                         delete postLists[i];
                     }
