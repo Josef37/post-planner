@@ -192,6 +192,7 @@ export class Dialog {
         leftCol.appendChild(titleDiv);
 
         // post lists radio with id as value, current list is checked
+        leftCol.append('Post Liste auswählen');
         const postListsList = document.createElement('ul');
         View.displayList(postListsList, postLists.map((postList): {id: number; innerHTML: string} => { 
             return {
