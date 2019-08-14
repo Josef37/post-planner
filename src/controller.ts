@@ -40,7 +40,7 @@ export class Controller {
         const filterPostButton = document.getElementById('filter-post-button');
         filterPostButton && filterPostButton.addEventListener('click', (): void => this.filterPost());
         const removePostButton = document.getElementById('remove-post-button');
-        removePostButton && removePostButton.addEventListener('click', (): void => this.removeCurrentPost());
+        removePostButton && removePostButton.addEventListener('click', (): void => this.removeCurrentPosts());
         const editPostListsButton = document.getElementById('edit-post-list-button');
         editPostListsButton && editPostListsButton.addEventListener('click', (): void => this.editPostLists());
 
@@ -141,10 +141,12 @@ export class Controller {
 
     /**
      * Edits the posts title and url by a dialog. Select the accounts that filter it.
+     * Only works with one selected post
      */
     private editPost(): void {
-        const post = this.getCurrentPost();
-        if (!post) return;
+        const posts = this.getCurrentPosts();
+        if (!posts || posts.size !== 1) return;
+        const post = posts.values().next().value;
         const accounts = this.accountList.accounts.map((account): { id: number; title: string; filtered: boolean } => {
             return {id: account.id, title: account.title, filtered: account.filteredPosts.has(post)}
         });
@@ -187,9 +189,9 @@ export class Controller {
      * Filters current post for current account
      */
     private filterPost(): void {
-        const [currentAccount, currentPost] = [this.accountList.currentAccount, this.getCurrentPost()];
-        if (!currentAccount || !currentPost) return;
-        currentAccount.filterPost(currentPost);
+        const [currentAccount, currentPosts] = [this.accountList.currentAccount, this.getCurrentPosts()];
+        if (!currentAccount || !currentPosts) return;
+        currentAccount.filterPosts(currentPosts);
         currentAccount.selectFirstPost();
         this.repaintAndSave();
     }
@@ -197,23 +199,25 @@ export class Controller {
     /**
      * Removes current post from all post lists
      */
-    private removeCurrentPost(): void {
-        const currentPost = this.getCurrentPost();
-        currentPost && Dialog.confirm(`Willst du wirklich den Post ${currentPost.title} überall löschen?`, 
+    private removeCurrentPosts(): void {
+        const currentPosts = this.getCurrentPosts();
+        currentPosts && Dialog.confirm(
+            `Willst du wirklich die Posts ${Array.from(currentPosts).map((post): string => post.title).join(', ')} überall löschen?`, 
             (): string | void => {
-                this.accountList.removePost(currentPost);
+                this.accountList.removePosts(currentPosts);
                 this.repaintAndSave();
             });
     }
 
     /**
      * Copies the posting text to the clipboard and moves the post to the end within the current post list 
-     * and selects the first post in the list.
+     * and selects the first post in the list. Only works with one selected post.
      */
     private acceptPost(): void {
-        const currentPost = this.getCurrentPost();
+        const currentPosts = this.getCurrentPosts();
         const currentAccount = this.accountList.currentAccount;
-        if (!currentPost || !currentAccount || !currentAccount.postList) return;
+        if (!currentPosts || currentPosts.size !== 1 || !currentAccount || !currentAccount.postList) return;
+        const currentPost = currentPosts.values().next().value;
         currentAccount.postList.putPostLast(currentPost);
         navigator.clipboard.writeText(currentPost.getTextForPosting());
         currentAccount.selectFirstPost();
@@ -224,10 +228,10 @@ export class Controller {
      * Moves the current post to the end of the current post list and selects the first post in the list.
      */
     private declinePost(): void {
-        const currentPost = this.getCurrentPost();
+        const currentPosts = this.getCurrentPosts();
         const currentAccount = this.accountList.currentAccount;
-        if (!currentAccount || !currentPost || !currentAccount.postList) return;
-        currentAccount.postList.putPostLast(currentPost);
+        if (!currentAccount || !currentPosts) return;
+        currentPosts.forEach((post): void => { currentAccount.postList && currentAccount.postList.putPostLast(post) });
         currentAccount.selectFirstPost();
         this.repaintAndSave();
     }
@@ -236,10 +240,10 @@ export class Controller {
      * Moves the post down a few positions within the current post list and selects the first post in the list.
      */
     private deferPost(positions?: number): void {
-        const currentPost = this.getCurrentPost();
+        const currentPosts = this.getCurrentPosts();
         const currentAccount = this.accountList.currentAccount;
-        if (!currentAccount || !currentPost || !currentAccount.postList) return;
-        currentAccount.postList.deferPost(currentPost, positions);
+        if (!currentAccount || !currentPosts) return;
+        currentPosts.forEach((post): void => { currentAccount.postList && currentAccount.postList.deferPost(post, positions) });
         currentAccount.selectFirstPost();
         this.repaintAndSave();
     }
@@ -248,8 +252,9 @@ export class Controller {
      * Creates a dialog to edit the posts text (not the url)
      */
     private editPostText(): void {
-        const currentPost = this.getCurrentPost();
-        if (!currentPost) return;
+        const currentPosts = this.getCurrentPosts();
+        if (!currentPosts || currentPosts.size !== 1) return;
+        const currentPost = currentPosts.values().next().value;
         Dialog.editPostText(currentPost.title, currentPost.url, currentPost.text, 
             (newText): string | void => {
                 currentPost.text = newText;
@@ -268,15 +273,17 @@ export class Controller {
      * Repaints the view depending on selected elements.
      */
     private repaintView(): void {
+        // Shows the post list, if there is one account selected
         this.view.displayAccountList(this.accountList.accounts);
         if (this.accountList.currentAccount) {
             this.view.displayPostList(this.accountList.currentAccount.getPostsFiltered() || []);
         } else {
             this.view.displayPostList([]);
         }
-        const currentPost = this.getCurrentPost();
-        if (currentPost) {
-            this.view.displayPostText(currentPost);
+        // Shows the post text, if there is only one post selected
+        const currentPosts = this.getCurrentPosts();
+        if (currentPosts && currentPosts.size === 1) {
+            this.view.displayPostText(currentPosts.values().next().value);
         } else {
             this.view.clearPostText();
         }
@@ -339,11 +346,11 @@ export class Controller {
     }
 
     /**
-     * Gets the current post, if an account and post are selected
+     * Gets the current post, if an account is selected
      */
-    public getCurrentPost(): Post | null {
+    public getCurrentPosts(): Set<Post> | null {
         const currentAccount = this.accountList.currentAccount;
-        return currentAccount && currentAccount.currentPost;
+        return currentAccount && currentAccount.currentPosts;
     }
 
     /**
@@ -352,7 +359,17 @@ export class Controller {
     public setCurrentPost(post: Post | null): void {
         const currentAccount = this.accountList.currentAccount;
         if (!currentAccount) return;
-        currentAccount.currentPost = post;
+        currentAccount.setCurrentPost(post);
+        this.repaintView();
+    }
+
+    /**
+     * Adds the post to current posts for the current account, if there is one
+     */
+    public addCurrentPost(post: Post | null): void {
+        const currentAccount = this.accountList.currentAccount;
+        if (!currentAccount) return;
+        currentAccount && post && currentAccount.currentPosts.add(post);
         this.repaintView();
     }
 

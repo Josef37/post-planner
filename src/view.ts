@@ -45,8 +45,8 @@ export class View {
                 id: post.id,
                 innerHTML: `<a href="${post.url}" target="_blank">Link</a> ${post.title}`
             })));
-        const currentPost = this.controller.getCurrentPost();
-        if(currentPost) {
+        const currentPosts = this.controller.getCurrentPosts();
+        if(currentPosts) for(const currentPost of currentPosts) {
             const currentPostListItem = document.querySelector('#post-list li[data-id="' + currentPost.id + '"]');
             currentPostListItem && currentPostListItem.toggleAttribute('selected');
         }
@@ -65,9 +65,13 @@ export class View {
      * Makes the post list selectable. But only if there is a current account selected.
      */
     private makePostListSelector(): void {
-        View.makeListSelector(this.postListElement, (postId): void => {
+        View.makeListSelector(this.postListElement, (postId, event): void => {
             if(!this.controller.getCurrentAccount()) return;
-            this.controller.setCurrentPost(this.controller.getPostById(postId));
+            if(event.ctrlKey) {
+                this.controller.addCurrentPost(this.controller.getPostById(postId));
+            } else {
+                this.controller.setCurrentPost(this.controller.getPostById(postId));
+            }
         });
     }
 
@@ -108,12 +112,12 @@ export class View {
      * @param list Where to select from
      * @param callback Gets called on click with the selected id
      */
-    private static makeListSelector(list: HTMLElement | null, callback: ((id: number) => void)): void {
+    private static makeListSelector(list: HTMLElement | null, callback: ((id: number, event: MouseEvent) => void)): void {
         if(!list) return;
         list.addEventListener('click', (event): void => {
             Array.from(list.children)
                 .filter((listItem): boolean => listItem === event.target)
-                .forEach((listItem): void => callback(Number(listItem.getAttribute('data-id'))));
+                .forEach((listItem): void => callback(Number(listItem.getAttribute('data-id')), event));
         });
     }
     

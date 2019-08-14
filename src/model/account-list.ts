@@ -64,15 +64,17 @@ export class AccountList {
     }
 
     /**
-     * Removes a post from all post lists, filters and as current post
-     * @param post the post to be removed
+     * Removes posts from all post lists, filters and as current post
+     * @param posts the post to be removed
      */
-    public removePost(post: Post): void {
-        this.postLists.forEach((list): boolean => list.removePost(post));
-        this.accounts.forEach((account): void => {
-            if(account.currentPost == post) account.currentPost = null;
-            account.unfilterPost(post);
-        });
+    public removePosts(posts: Set<Post>): void {
+        for(const post of posts) {
+            this.postLists.forEach((list): boolean => list.removePost(post));
+            this.accounts.forEach((account): void => {
+                account.currentPosts.delete(post);
+                account.unfilterPost(post);
+            });
+        }
     }
 
     /**

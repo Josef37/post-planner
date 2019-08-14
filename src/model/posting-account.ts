@@ -7,7 +7,7 @@ export class PostingAccount {
     public static runningId: number = 0;
 
     public id: number;
-    public currentPost: Post | null = null;
+    public currentPosts: Set<Post> = new Set();
     public title: string;
     public postList: PostList | null;
     public filteredPosts: Set<Post>;
@@ -26,10 +26,18 @@ export class PostingAccount {
 
     /**
      * Excludes a post from posting for this account
-     * @param post the post filter
+     * @param post the post to filter
      */
     public filterPost(post: Post): void {
         this.filteredPosts.add(post);
+    }
+
+    /**
+     * Excludes a set of posts from posting for this account
+     * @param posts the posts to filter
+     */
+    public filterPosts(posts: Set<Post>): void {
+        posts.forEach((post): void => this.filterPost(post));
     }
 
     /**
@@ -55,7 +63,19 @@ export class PostingAccount {
      */
     public selectFirstPost(): void {
         const posts = this.getPostsFiltered();
-        if(posts && posts.length > 0) this.currentPost = posts[0];
+        if(posts && posts.length > 0) {
+            this.currentPosts.clear();
+            this.currentPosts.add(posts[0]);
+        }
+    }
+
+    /**
+     * Clears the current posts and sets the new one
+     * @param post the post to be set as current or null, if there should be none
+     */
+    public setCurrentPost(post: Post | null): void {
+        this.currentPosts.clear();
+        post && this.currentPosts.add(post);
     }
 
 }
