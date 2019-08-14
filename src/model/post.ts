@@ -25,7 +25,7 @@ export class Post {
      * @returns the text that actually gets posted (includes the url at the end)
      */
     public getTextForPosting(): string {
-        return this.text + '\n\n' + this.url;
+        return this.text + '\n' + this.url;
     }
 
 }
