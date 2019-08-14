@@ -124,9 +124,13 @@ section>.action {
     margin-left: 1em;
 }
 
+.dialog .post-info {
+    margin-bottom: .5em;
+}
+
 .dialog textarea {
     width: 100%;
-    height: calc(100% - 5em);
+    height: calc(100% - 5.5em);
     resize: none;
 }
 

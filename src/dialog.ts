@@ -64,14 +64,21 @@ export class Dialog {
     }
 
     /**
-     * Creates a dialog to edit text
+     * Creates a dialog to edit text and displays the posts title and url
+     * @param title the posts title
+     * @param url the posts url
      * @param postText the current post text
      * @param onconfirm the action to perform with the new post text on user confirmation
      */
-    public static editPostText(postText: string, onconfirm: (newPostText: string) => string | void): void {
+    public static editPostText(title: string, url: string, postText: string, 
+        onconfirm: (newPostText: string) => string | void): void {
+
+        const postInfoDiv = document.createElement('div');
+        postInfoDiv.setAttribute('class', 'post-info');
+        postInfoDiv.innerHTML = `<a href="${url}" target="_blank">Link</a> ${title}`;
         const textarea = document.createElement('textarea');
         textarea.value = postText;
-        Dialog.createDialog([textarea], (): string | void => onconfirm(textarea.value.trim()));
+        Dialog.createDialog([postInfoDiv, textarea], (): string | void => onconfirm(textarea.value.trim()));
     }
     
     /**

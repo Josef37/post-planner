@@ -250,10 +250,11 @@ export class Controller {
     private editPostText(): void {
         const currentPost = this.getCurrentPost();
         if (!currentPost) return;
-        Dialog.editPostText(currentPost.text, (newText): string | void => {
-            currentPost.text = newText;
-            this.repaintAndSave();
-        });
+        Dialog.editPostText(currentPost.title, currentPost.url, currentPost.text, 
+            (newText): string | void => {
+                currentPost.text = newText;
+                this.repaintAndSave();
+            });
     }
 
     /**
