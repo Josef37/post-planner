@@ -190,7 +190,7 @@ export class Controller {
         const [currentAccount, currentPost] = [this.accountList.currentAccount, this.getCurrentPost()];
         if (!currentAccount || !currentPost) return;
         currentAccount.filterPost(currentPost);
-        currentAccount.currentPost = null;
+        currentAccount.selectFirstPost();
         this.repaintAndSave();
     }
 
@@ -207,7 +207,8 @@ export class Controller {
     }
 
     /**
-     * Copies the posting text to the clipboard and moves the post to the end within the current post list.
+     * Copies the posting text to the clipboard and moves the post to the end within the current post list 
+     * and selects the first post in the list.
      */
     private acceptPost(): void {
         const currentPost = this.getCurrentPost();
@@ -215,26 +216,31 @@ export class Controller {
         if (!currentPost || !currentAccount || !currentAccount.postList) return;
         currentAccount.postList.putPostLast(currentPost);
         navigator.clipboard.writeText(currentPost.getTextForPosting());
+        currentAccount.selectFirstPost();
         this.repaintAndSave();
     }
 
     /**
-     * Moves the current post to the end of the current post list.
+     * Moves the current post to the end of the current post list and selects the first post in the list.
      */
     private declinePost(): void {
         const currentPost = this.getCurrentPost();
-        if (!this.accountList.currentAccount || !currentPost || !this.accountList.currentAccount.postList) return;
-        this.accountList.currentAccount.postList.putPostLast(currentPost);
+        const currentAccount = this.accountList.currentAccount;
+        if (!currentAccount || !currentPost || !currentAccount.postList) return;
+        currentAccount.postList.putPostLast(currentPost);
+        currentAccount.selectFirstPost();
         this.repaintAndSave();
     }
 
     /**
-     * Moves the post down a few positions within the current post list
+     * Moves the post down a few positions within the current post list and selects the first post in the list.
      */
     private deferPost(positions?: number): void {
         const currentPost = this.getCurrentPost();
-        if (!this.accountList.currentAccount || !currentPost || !this.accountList.currentAccount.postList) return;
-        this.accountList.currentAccount.postList.deferPost(currentPost, positions);
+        const currentAccount = this.accountList.currentAccount;
+        if (!currentAccount || !currentPost || !currentAccount.postList) return;
+        currentAccount.postList.deferPost(currentPost, positions);
+        currentAccount.selectFirstPost();
         this.repaintAndSave();
     }
 

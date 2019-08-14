@@ -49,4 +49,13 @@ export class PostingAccount {
         return this.postList && this.postList.posts.filter((post): boolean => !this.filteredPosts.has(post));
     }
 
+    /**
+     * Selects the first post of the post list as current post.
+     * Does nothing if there is no list or it is empty.
+     */
+    public selectFirstPost(): void {
+        const posts = this.getPostsFiltered();
+        if(posts && posts.length > 0) this.currentPost = posts[0];
+    }
+
 }
