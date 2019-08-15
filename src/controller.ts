@@ -83,6 +83,7 @@ export class Controller {
      * Edit the current account trough a dialog.
      * Edit title, post list and filtered posts
      */
+    //TODO: Let Users copy filters from other accounts or create custom filters, that are shared between users
     private editCurrentAccount(): void {
         const account = this.accountList.currentAccount;
         if (!account) return;
@@ -122,6 +123,7 @@ export class Controller {
      */
     private editPostLists(): void {
         const postLists = this.accountList.postLists;
+        //TODO: Let list be renamed, when they are in use (by returning an error message)
         Dialog.editPostLists(
             postLists,
             postLists.map((list): boolean => !!this.accountList.accounts.find((account): boolean => account.postList == list)),
